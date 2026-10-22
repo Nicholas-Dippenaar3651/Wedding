@@ -1,0 +1,63 @@
+/* Small helper classes: add them to any element in index.html or in the JS.
+   Loaded after styles.css, so they win over the component styles. */
+.u-serif {
+  font-family: var(--font-display);
+}
+.u-italic {
+  font-style: italic;
+}
+.u-muted {
+  color: var(--muted);
+}
+.u-accent {
+  color: var(--accent-strong);
+}
+.u-sage {
+  color: var(--sage);
+}
+.u-center {
+  text-align: center;
+}
+.u-small {
+  font-size: 0.85rem;
+}
+.u-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 20px;
+}
+.u-stack {
+  display: grid;
+  gap: 8px;
+}
+.u-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.u-mt-0 {
+  margin-top: 0 !important;
+}
+.u-mt-1 {
+  margin-top: 8px !important;
+}
+.u-mt-2 {
+  margin-top: 16px !important;
+}
+.u-mt-3 {
+  margin-top: 32px !important;
+}
+.u-mb-0 {
+  margin-bottom: 0 !important;
+}
+.u-mb-1 {
+  margin-bottom: 8px !important;
+}
+.u-mb-2 {
+  margin-bottom: 16px !important;
+}
+.u-mb-3 {
+  margin-bottom: 32px !important;
+}

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="af">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Troue Beplanning</title>
+    <script src="js/theme.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/helpers.css" />
+  </head>
+  <body class="readonly">
+    <div class="wrap">
+      <header>
+        <span class="sync" id="sync" role="status" hidden></span>
+        <div class="theme-switch" role="group" aria-label="Kleurtema">
+          <button data-theme-choice="auto" title="Volg die toestel se instelling">Outo</button>
+          <button data-theme-choice="light">Lig</button>
+          <button data-theme-choice="dark">Donker</button>
+        </div>
+        <p class="kicker">Troue beplanning</p>
+        <h1>Nic <span class="amp">&amp;</span> Christy</h1>
+        <svg class="sprig" viewBox="0 0 160 24" aria-hidden="true">
+          <path d="M4 12h52M104 12h52" />
+          <path d="M60 12h40" />
+          <path class="leaf" d="M68 12c0-4.5 3.2-7.5 7.5-7.5 0 4.5-3.2 7.5-7.5 7.5z" />
+          <path class="leaf" d="M76 12c0 4.5 3.2 7.5 7.5 7.5 0-4.5-3.2-7.5-7.5-7.5z" />
+          <path class="leaf" d="M84 12c0-4.5 3.2-7.5 7.5-7.5 0 4.5-3.2 7.5-7.5 7.5z" />
+          <path class="leaf" d="M68 12c0 4.5-3.2 7.5-7.5 7.5 0-4.5 3.2-7.5 7.5-7.5z" />
+          <circle cx="100" cy="12" r="1.6" />
+        </svg>
+        <p class="when" id="when" hidden></p>
+        <div class="auth" id="auth" hidden></div>
+      </header>
+
+      <nav class="pages" role="tablist" aria-label="Bladsye">
+        <button role="tab" data-page="tydlyn" id="navTydlyn">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+          <span>Tydlyn</span>
+        </button>
+        <button role="tab" data-page="todo" id="navTodo">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" /><path d="M13 6h8" /><path d="M13 12h8" /><path d="M13 18h8" /></svg>
+          <span>Voorbereiding</span>
+        </button>
+        <!-- signed-in editors only; the server doesn't send the budget to anyone else -->
+        <button role="tab" data-page="begroting" id="navBegroting" class="edit-only">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></svg>
+          <span>Begroting</span>
+        </button>
+      </nav>
+
+      <!-- add / rename / recolour groups (opened from the ⋯ menu) -->
+      <div class="group-admin edit-only" id="groupAdmin" hidden></div>
+
+      <!-- pinned to the top while scrolling: search, options, group tabs and the live banner -->
+      <div id="pinSentinel"></div>
+      <div class="pinned" id="pinned">
+        <div class="search-row">
+          <label class="searchbox">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+            <input type="search" id="search" placeholder="Soek in take en tydlyn…" aria-label="Soek" autocomplete="off" />
+          </label>
+          <span class="search-count" id="searchCount" aria-live="polite"></span>
+          <button class="btn small edit-only" id="pickBtn" aria-pressed="false">Kies take</button>
+          <details class="menu" id="viewMenu">
+            <summary class="icon-btn" title="Meer opsies" aria-label="Meer opsies">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>
+            </summary>
+            <div class="menu-pop">
+              <label class="opt todo-only"><input type="checkbox" id="hideDone" /> Versteek klaar take</label>
+              <label class="opt"><input type="checkbox" id="hideOthers" /> Wys net die gekose groep</label>
+              <button class="menu-item edit-only" id="manageGroupsBtn" aria-expanded="false">Wysig groepe</button>
+            </div>
+          </details>
+        </div>
+        <div class="tabs" id="tabs" role="tablist" aria-label="Wys vir"></div>
+        <div class="live" id="live" hidden>
+          <div class="clock" id="liveClock"></div>
+          <div class="lines" id="liveLines"></div>
+          <button class="btn small" id="jumpNow">Spring na nou</button>
+        </div>
+      </div>
+
+      <!-- ===================== VOORBEREIDING ===================== -->
+      <section class="page" id="page-todo">
+        <div class="overview" id="todoOverview"></div>
+        <div id="sections"></div>
+        <div class="bulk" id="bulkBar" role="toolbar" aria-label="Wysig gekose take" hidden></div>
+      </section>
+
+      <!-- ===================== TYDLYN ===================== -->
+      <section class="page" id="page-tydlyn" hidden>
+        <div class="overview stats" id="tlOverview"></div>
+        <div class="tl-options">
+          <button class="btn primary edit-only" id="addEventBtn">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+            Nuwe item
+          </button>
+          <div class="right">
+            <label class="opt">Troudag <input type="date" id="weddingDate" /></label>
+            <label class="opt"><input type="checkbox" id="liveToggle" /> Lewendige modus</label>
+          </div>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </section>
+
+      <!-- ===================== BEGROTING (signed in only) ===================== -->
+      <section class="page" id="page-begroting" hidden>
+        <div class="overview stats" id="budgetOverview"></div>
+
+        <section class="bzone" id="dueZone" aria-labelledby="dueTitle">
+          <div class="bzone-head">
+            <h2 class="period" id="dueTitle">Herinneringe</h2>
+            <button class="btn primary small" id="addDueBtn">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+              Nuwe herinnering
+            </button>
+          </div>
+          <p class="bzone-hint">Wat nog betaal moet word. Sleep 'n kaart na Betalingsgeskiedenis, of kies Betaal, sodra dit betaal is.</p>
+          <div class="bcards" id="dueCards"></div>
+        </section>
+
+        <section class="bzone drop" id="paidZone" aria-labelledby="paidTitle">
+          <div class="bzone-head">
+            <h2 class="period" id="paidTitle">Betalingsgeskiedenis</h2>
+            <button class="btn small" id="addPaidBtn">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+              Nuwe betaling
+            </button>
+          </div>
+          <p class="bzone-hint drop-hint">Los die kaart hier om dit as betaal te merk.</p>
+          <div class="bcards" id="paidCards"></div>
+        </section>
+      </section>
+
+      <footer id="footer">Veranderinge word op die bediener gestoor en met almal gedeel wat die bladsy oop het.</footer>
+    </div>
+    <script src="js/core.js"></script>
+    <script src="js/drag.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/lys.js"></script>
+    <script src="js/tydlyn.js"></script>
+    <script src="js/begroting.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
