@@ -21,7 +21,8 @@
       "PowerShell($edge = \"${env:ProgramFiles\\(x86\\)}\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\"; $out = \"C:\\\\Users\\\\NDIPPE~1.SIN\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-NDippenaar-SINGULAR-Downloads-Troue-WebApp\\\\9e610161-814d-4a4d-9ec3-270587e6660e\\\\scratchpad\"; $prof = Join-Path $out \"edge-profile\"; foreach \\($s in @\\(@{n=\"budget-desk\"; w=1280; h=2000; u=\"?theme=light#begroting\"}, @{n=\"budget-mob\"; w=520; h=1300; u=\"?theme=dark#begroting\"}\\)\\) { $p = Start-Process -FilePath $edge -ArgumentList @\\(\"--headless=new\", \"--disable-gpu\", \"--hide-scrollbars\", \"--user-data-dir=`\"$prof`\"\", \"--virtual-time-budget=3000\", \"--window-size=$\\($s.w\\),$\\($s.h\\)\", \"--screenshot=`\"$out\\\\$\\($s.n\\).png`\"\", \"http://127.0.0.1:3999/$\\($s.u\\)\"\\) -PassThru; if \\(-not $p.WaitForExit\\(30000\\)\\) { $p.Kill\\(\\); \"timeout $\\($s.n\\)\" } }; \"done\")",
       "PowerShell(node --check server.js; if \\($?\\) { \"server.js OK\" }; node --check public\\\\js\\\\begroting.js; if \\($?\\) { \"begroting.js OK\" }; Select-String -Path public\\\\js\\\\begroting.js -Pattern 'expenseTotals|totals\\\\[|t\\\\.parts|t\\\\.budget' | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" })",
       "PowerShell(node --check server.js; if \\($?\\) { \"server.js OK\" }; Get-ChildItem data -Name)",
-      "PowerShell(node --check public\\\\js\\\\begroting.js; if \\($?\\) { \"begroting.js OK\" })"
+      "PowerShell(node --check public\\\\js\\\\begroting.js; if \\($?\\) { \"begroting.js OK\" })",
+      "PowerShell(node --check server.js; $env:TROUE_WAGWOORD=''; node server.js; \"exit code: $LASTEXITCODE\")"
     ]
   }
 }
