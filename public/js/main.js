@@ -5,5 +5,6 @@ showPage(location.hash.slice(1));
 renderSettings();
 renderTodos();
 renderTimeline();
+renderPhotos();
 // the page starts read-only (body.readonly) until the server says who is signed in
 connectServer();

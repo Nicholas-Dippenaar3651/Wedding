@@ -4,9 +4,11 @@
    Most of the look comes from the variables under "tokens" below. Change one and it applies everywhere.
    Dark mode has its own copy of the colours, listed twice (follow-the-device + "Donker"), so change both.
      colours     --bg (page), --surface (cards), --surface-2 (hover, inner boxes), --text, --muted, --line (borders)
-                 --accent / --accent-strong (aqua: buttons, ticks, rings), --secondary (yellow: countdown, marks)
-                 --sage (kicker, sprig, day labels, full rings), --now (live mode), --danger (delete)
-     type        --font-display (headings, times, numbers), --font-body (everything else). Fonts load in index.html.
+                 --accent (sunflower gold: buttons, ticks) / --accent-strong (blue: links, rings, focus), --secondary (yellow: countdown, marks)
+                 --sage (deep gold: kicker, day labels, full rings), --now (live mode), --danger (delete)
+     type        --font-display (headings, times, numbers), --font-body (everything else), --font-script (day labels, empty notes).
+                 Fonts load in beplanning.html.
+   The menu panel on the right is shared with the landing page: menu.css / menu.js.
      shape       --radius (cards, sections), --shadow (resting), --shadow-lift (menus, dialogs, bulk bar)
      motion      --ease-out
    Each component has its own block below, marked with "=====" headings. Search for the class you see in the browser.
@@ -15,53 +17,54 @@
 
 /* ================= tokens ================= */
 :root {
-  /* wedding colours: aqua #ade4ea (primary) and pastel yellow #fdfd96 (secondary), on warm ivory */
-  --bg: #fbf8f2;
-  --surface: #fffdf9;
-  --surface-2: #f4efe6;
-  --text: #26312d;
-  --muted: #6e776f;
-  --line: #e9e2d5;
-  --accent: #ade4ea;
-  --accent-soft: #e4f6f8;
-  --accent-ink: #17393e;
-  --accent-strong: #2f8590;
-  --secondary: #fdfd96;
-  --secondary-ink: #3d3a00;
-  --secondary-soft: #fefcdc;
-  --sage: #8a9a7b;
+  /* wedding colours, matching the landing page (index.html): navy #141a3a / ink #1c1b4d, sunflower gold #f4c430, mist #d6dcf0 */
+  --bg: #f5f7fc;
+  --surface: #ffffff;
+  --surface-2: #eef1f9;
+  --text: #1c1b4d;
+  --muted: #4a5578;
+  --line: #d6dcf0;
+  --accent: #f4c430;
+  --accent-soft: #fef5d4;
+  --accent-ink: #1c1b4d;
+  --accent-strong: #34507f;
+  --secondary: #ffe27a;
+  --secondary-ink: #3e2713;
+  --secondary-soft: #fff6d6;
+  --sage: #8f6400; /* deep sunflower gold: kicker, day labels, full rings */
   --danger: #b4534b;
   --now: #c4553a;
-  --overlay: rgba(38, 30, 20, 0.35);
+  --overlay: rgba(20, 26, 58, 0.4);
   --dim: 0.32;
-  --shadow: 0 1px 2px rgba(80, 60, 30, 0.05), 0 10px 28px -14px rgba(80, 60, 30, 0.16);
-  --shadow-lift: 0 2px 4px rgba(80, 60, 30, 0.06), 0 18px 40px -16px rgba(80, 60, 30, 0.28);
+  --shadow: 0 1px 2px rgba(28, 27, 77, 0.05), 0 10px 28px -14px rgba(28, 27, 77, 0.18);
+  --shadow-lift: 0 2px 4px rgba(28, 27, 77, 0.06), 0 18px 40px -16px rgba(28, 27, 77, 0.3);
   --radius: 18px;
   /* group colours (--g-<key>) are generated from the saved groups, see applyGroups() */
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Alegreya SC", Georgia, serif;
+  --font-body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-script: "Playball", cursive; /* day labels, empty notes */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #161412;
-    --surface: #1f1c19;
-    --surface-2: #2a2622;
-    --text: #f1ebe1;
-    --muted: #a89f92;
-    --line: #36302a;
-    --accent: #ade4ea;
-    --accent-soft: #213538;
-    --accent-ink: #17393e;
-    --accent-strong: #8fd6de;
-    --secondary: #fdfd96;
-    --secondary-ink: #3d3a00;
-    --secondary-soft: #2e2c1b;
-    --sage: #a3b394;
-    --danger: #e08a82;
-    --now: #f08a6e;
-    --overlay: rgba(0, 0, 0, 0.55);
+    --bg: #141a3a;
+    --surface: #1c2348;
+    --surface-2: #262e58;
+    --text: #f5f7fc;
+    --muted: #b3bcd9;
+    --line: #313a6a;
+    --accent: #f4c430;
+    --accent-soft: #2c2f4f;
+    --accent-ink: #1c1b4d;
+    --accent-strong: #f4c430;
+    --secondary: #f4c430;
+    --secondary-ink: #1c1b4d;
+    --secondary-soft: #2e2e48;
+    --sage: #e8c55a;
+    --danger: #f09a8f;
+    --now: #ff9a73;
+    --overlay: rgba(5, 8, 24, 0.6);
     --dim: 0.28;
     --shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
     --shadow-lift: 0 18px 40px -16px rgba(0, 0, 0, 0.6);
@@ -69,23 +72,23 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg: #161412;
-  --surface: #1f1c19;
-  --surface-2: #2a2622;
-  --text: #f1ebe1;
-  --muted: #a89f92;
-  --line: #36302a;
-  --accent: #ade4ea;
-  --accent-soft: #213538;
-  --accent-ink: #17393e;
-  --accent-strong: #8fd6de;
-  --secondary: #fdfd96;
-  --secondary-ink: #3d3a00;
-  --secondary-soft: #2e2c1b;
-  --sage: #a3b394;
-  --danger: #e08a82;
-  --now: #f08a6e;
-  --overlay: rgba(0, 0, 0, 0.55);
+  --bg: #141a3a;
+  --surface: #1c2348;
+  --surface-2: #262e58;
+  --text: #f5f7fc;
+  --muted: #b3bcd9;
+  --line: #313a6a;
+  --accent: #f4c430;
+  --accent-soft: #2c2f4f;
+  --accent-ink: #1c1b4d;
+  --accent-strong: #f4c430;
+  --secondary: #f4c430;
+  --secondary-ink: #1c1b4d;
+  --secondary-soft: #2e2e48;
+  --sage: #e8c55a;
+  --danger: #f09a8f;
+  --now: #ff9a73;
+  --overlay: rgba(5, 8, 24, 0.6);
   --dim: 0.28;
   --shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
   --shadow-lift: 0 18px 40px -16px rgba(0, 0, 0, 0.6);
@@ -105,9 +108,9 @@ body {
   color: var(--text);
   font: 15px/1.55 var(--font-body);
   -webkit-font-smoothing: antialiased;
-  /* a faint aqua wash behind the header, over a paper grain */
+  /* a faint sunflower wash under the header, over a paper grain */
   background:
-    radial-gradient(ellipse 900px 420px at 50% -120px, color-mix(in srgb, var(--accent) 34%, transparent), transparent 70%),
+    radial-gradient(ellipse 900px 420px at 50% 180px, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .3 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
     var(--bg);
   background-attachment: scroll, fixed;
@@ -152,8 +155,7 @@ mark {
 .empty {
   color: var(--muted);
   padding: 10px 20px;
-  font-family: var(--font-display);
-  font-style: italic;
+  font-family: var(--font-script);
   font-size: 1.15rem;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -175,43 +177,72 @@ body.readonly .edit-only {
 }
 
 /* ================= header ================= */
+/* a navy band over the cover photo, like the landing page hero; the same in both themes */
 header {
-  text-align: center;
-  padding: 56px 0 8px;
   position: relative;
+  text-align: center;
+  color: #fff;
+  padding: 60px 16px 60px;
+  background:
+    linear-gradient(180deg, rgba(18, 24, 62, 0.62), rgba(18, 24, 62, 0.86)),
+    url("../assets/cover.jpg") center 30% / cover,
+    #141a3a;
 }
 .kicker {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--sage);
+  color: #f4c430;
+}
+.hero-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.hero-title .bouquet {
+  width: clamp(44px, 10vw, 72px);
+  flex: none;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
+}
+.hero-title .bouquet.l {
+  transform: rotate(-8deg);
+}
+.hero-title .bouquet.r {
+  transform: scaleX(-1) rotate(-8deg);
 }
 h1 {
-  font-size: clamp(2.6rem, 9vw, 3.8rem);
+  font-size: clamp(2.1rem, 8vw, 3.2rem);
   line-height: 1;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.04em;
 }
 h1 .amp {
-  font-style: italic;
-  color: var(--accent-strong);
+  color: #f4c430;
   padding: 0 0.05em;
 }
-.sprig {
-  display: block;
-  width: 160px;
-  height: 24px;
-  margin: 12px auto 6px;
-  fill: none;
-  stroke: var(--sage);
-  stroke-width: 1.2;
-  stroke-linecap: round;
+/* sunflower between two gold lines (the flower is the #sf symbol in beplanning.html) */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 12px auto 10px;
+  color: #f4c430;
 }
-.sprig .leaf,
-.sprig circle {
-  fill: color-mix(in srgb, var(--sage) 22%, transparent);
+.divider::before,
+.divider::after {
+  content: "";
+  width: 56px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+.divider svg {
+  width: 20px;
+  height: 20px;
 }
 .when {
   margin: 0;
@@ -221,18 +252,20 @@ h1 .amp {
   align-items: center;
   gap: 6px 10px;
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 500;
+  letter-spacing: 0.06em;
 }
 .when[hidden] {
   display: none;
 }
 .when .left {
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  background: var(--secondary);
-  color: var(--secondary-ink);
+  letter-spacing: 0.08em;
+  background: #f4c430;
+  color: #1c1b4d;
   border-radius: 999px;
   padding: 2px 10px;
 }
@@ -244,7 +277,23 @@ h1 .amp {
   gap: 8px;
   flex-wrap: wrap;
   font-size: 0.85rem;
-  color: var(--muted);
+  color: #d6dcf0;
+}
+header .link-btn {
+  color: #f4c430;
+}
+/* top right: the theme switch and the MENU button (css/menu.css). They scroll away with the header,
+   so the MENU button never covers the pinned bar */
+.header-tools {
+  position: absolute;
+  top: 16px;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-tools .site-menu-btn {
+  position: static;
 }
 .auth[hidden] {
   display: none;
@@ -262,43 +311,42 @@ h1 .amp {
   text-underline-offset: 3px;
 }
 
-/* theme switch: Outo (follows the device) / Lig / Donker */
+/* theme switch: Outo (follows the device) / Lig / Donker; in the header, next to the MENU button */
 .theme-switch {
-  position: absolute;
-  top: 12px;
-  right: 0;
   display: flex;
   gap: 2px;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
-  border: 1px solid var(--line);
+  background: rgba(20, 26, 58, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(244, 196, 48, 0.45);
   border-radius: 999px;
   padding: 3px;
 }
 .theme-switch button {
   border: 0;
   background: none;
-  color: var(--muted);
+  color: #d6dcf0;
   font-size: 0.78rem;
   font-weight: 500;
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: 999px;
   cursor: pointer;
 }
 .theme-switch button[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: #f4c430;
+  color: #1c1b4d;
 }
 
-/* server connection status */
+/* server connection status, top left of the header */
 .sync {
   position: absolute;
-  top: 17px;
-  left: 0;
+  top: 26px;
+  left: max(16px, env(safe-area-inset-left, 0px));
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 0.75rem;
-  color: var(--muted);
+  color: #d6dcf0;
 }
 .sync[hidden] {
   display: none;
@@ -308,17 +356,17 @@ h1 .amp {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--sage);
+  background: #7fd1a0;
 }
 .sync[data-status="offline"]::before {
-  background: #d4a017; /* amber reads on both themes */
+  background: #f4c430;
 }
 .sync[data-status="error"] {
-  color: var(--danger);
+  color: #ffb4a8;
   font-weight: 600;
 }
 .sync[data-status="error"]::before {
-  background: var(--danger);
+  background: #ff8a7a;
 }
 @media (max-width: 520px) {
   .sync {
@@ -328,12 +376,20 @@ h1 .amp {
 }
 
 /* ================= page tabs ================= */
+/* a white pill overlapping the bottom of the header, like the passport card on the landing page */
 nav.pages {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   gap: 28px;
-  margin: 26px auto 20px;
-  border-bottom: 1px solid var(--line);
+  width: fit-content;
+  margin: -28px auto 20px;
+  padding: 0 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow-lift);
 }
 nav.pages button {
   position: relative;
@@ -345,7 +401,7 @@ nav.pages button {
   color: var(--muted);
   font-weight: 500;
   font-size: 0.98rem;
-  padding: 10px 4px 12px;
+  padding: 13px 4px 14px;
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -357,10 +413,10 @@ nav.pages button::after {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -1px;
+  bottom: 6px;
   height: 3px;
-  border-radius: 3px 3px 0 0;
-  background: var(--accent-strong);
+  border-radius: 3px;
+  background: var(--accent);
   transform: scaleX(0);
   transition: transform 0.25s var(--ease-out);
 }
@@ -387,11 +443,14 @@ nav.pages button[aria-selected="true"]::after {
     z-index: 30;
     margin: 0;
     gap: 0;
+    width: auto;
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 1fr; /* two tabs for viewers, three when signed in */
-    border-bottom: 0;
+    border: 0;
     border-top: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
     background: color-mix(in srgb, var(--surface) 88%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -418,7 +477,11 @@ nav.pages button[aria-selected="true"]::after {
     display: none;
   }
   header {
-    padding-bottom: 16px;
+    padding-top: 72px;
+    padding-bottom: 36px;
+  }
+  .wrap {
+    padding-top: 16px;
   }
 }
 
@@ -575,7 +638,7 @@ input[type="date"] {
 .pick:checked {
   background-color: var(--accent);
   border-color: var(--accent-strong);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2317393e' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c1b4d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
   animation: pop 0.3s var(--ease-out);
 }
 .tick:disabled {
@@ -588,6 +651,10 @@ input[type="date"] {
 }
 
 /* ================= pinned bar ================= */
+/* search and group tabs don't apply to the photo list */
+body[data-page="fotos"] .pinned {
+  display: none;
+}
 .pinned {
   position: sticky;
   top: 0;
@@ -606,7 +673,7 @@ input[type="date"] {
 .pinned.stuck {
   box-shadow:
     0 1px 0 var(--line),
-    0 10px 20px -16px rgba(60, 40, 20, 0.35);
+    0 10px 20px -16px rgba(28, 27, 77, 0.35);
 }
 .search-row {
   display: flex;
@@ -1499,7 +1566,7 @@ body.is-dragging {
 /* ================= Tydlyn ================= */
 .tl-options {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* buttons on the left; .right pushes itself to the right */
   align-items: center;
   gap: 10px 16px;
   flex-wrap: wrap;
@@ -1529,9 +1596,8 @@ body.is-dragging {
 .daypart {
   position: relative;
   padding: 18px 0 6px calc(var(--time-w) + var(--node-w));
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.3rem;
+  font-family: var(--font-script);
+  font-size: 1.35rem;
   font-weight: 500;
   color: var(--sage);
 }
@@ -1690,6 +1756,25 @@ body.is-dragging {
   border-radius: 2px;
 }
 
+/* timeline drag and drop (js/tydlyn.js); the handle is the list's .drag-handle, hidden until signed in */
+.ev .drag-handle {
+  margin-left: -10px;
+  margin-right: -4px;
+  margin-top: 1px;
+}
+.ev .card:hover .drag-handle {
+  opacity: 0.7;
+}
+.ev.dragging {
+  opacity: 0.35;
+}
+.ev-drop-line {
+  height: 3px;
+  margin: -1px 0 -2px calc(var(--time-w) + var(--node-w));
+  border-radius: 2px;
+  background: var(--accent-strong);
+}
+
 /* timeline editing */
 .card-top {
   display: flex;
@@ -1816,6 +1901,45 @@ body.is-dragging {
 .login-form h2 {
   font-size: 1.7rem;
   font-weight: 500;
+}
+/* timeline export: pick a group */
+.export-hint {
+  margin: -4px 0 0 !important;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.export-choices {
+  display: grid;
+  gap: 2px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.export-choice {
+  --c: var(--accent-strong);
+  color: var(--text);
+  padding: 7px 10px;
+  border-radius: 10px;
+}
+.export-choice:hover {
+  background: var(--surface-2);
+}
+.export-choice:has(input:checked) {
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+}
+.export-choice:has(input:disabled) {
+  opacity: 0.45;
+  cursor: default;
+}
+.export-choice input {
+  accent-color: var(--c);
+}
+.export-choice span:nth-of-type(1) {
+  flex: 1;
+}
+.export-choice .n {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
 }
 .login-form .err {
   color: var(--danger);
@@ -2197,4 +2321,139 @@ body.readonly .bpay {
   font-size: 0.88rem;
   color: var(--accent-strong);
   font-weight: 500;
+}
+
+/* ================= fotos ================= */
+.photo-list {
+  display: grid;
+  gap: 10px;
+}
+/* a moment heading, like the timeline's Oggend / Middag / Aand */
+.photo-when {
+  padding: 14px 0 0 50px;
+}
+.photo-when:first-child {
+  padding-top: 0;
+}
+.photo {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+/* the photo's place in the order, in a sunflower-gold circle */
+.photo .num {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  font-variant-numeric: lining-nums;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.photo .card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 11px 15px;
+  box-shadow: var(--shadow);
+  border-left: 3px solid var(--accent);
+  min-width: 0;
+}
+.photo .card-top {
+  align-items: center;
+}
+.photo .title {
+  font-weight: 600;
+  padding-top: 0;
+}
+.photo .card.done {
+  background: var(--surface-2);
+  box-shadow: none;
+}
+.photo .card.done .title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.photo .people,
+.photo .note {
+  margin: 6px 0 0 30px;
+  font-size: 0.88rem;
+}
+.photo .people b {
+  font-weight: 600;
+  color: var(--sage);
+}
+.photo .note {
+  color: var(--muted);
+}
+.photo-actions {
+  display: flex;
+  gap: 2px;
+  margin: -3px -6px -3px 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.photo .card:hover .photo-actions,
+.photo .card:focus-within .photo-actions {
+  opacity: 1;
+}
+@media (hover: none) {
+  .photo-actions {
+    opacity: 1;
+  }
+}
+/* drag and drop (js/fotos.js); the handle is the list's .drag-handle, hidden until signed in */
+.photo .drag-handle {
+  margin-left: -10px;
+  margin-right: -4px;
+}
+.photo .card:hover .drag-handle {
+  opacity: 0.7;
+}
+.photo.dragging {
+  opacity: 0.35;
+}
+.photo-drop-line {
+  height: 3px;
+  margin: -2px 0 -2px 50px;
+  border-radius: 2px;
+  background: var(--accent-strong);
+}
+.photo-form {
+  display: grid;
+  gap: 10px;
+  border-left-color: var(--accent-strong) !important;
+}
+.photo-form .when-input {
+  flex: 0 1 240px;
+}
+@media (max-width: 520px) {
+  .photo {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .photo .num {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+  .photo-when {
+    padding-left: 38px;
+  }
+  .photo-drop-line {
+    margin-left: 38px;
+  }
+  .photo .people,
+  .photo .note {
+    margin-left: 0;
+  }
+  .photo-form .when-input {
+    flex-basis: 100%;
+  }
 }

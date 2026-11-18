@@ -1,4 +1,4 @@
-/* Small helper classes: add them to any element in index.html or in the JS.
+/* Small helper classes: add them to any element in beplanning.html or in the JS.
    Loaded after styles.css, so they win over the component styles. */
 .u-serif {
   font-family: var(--font-display);

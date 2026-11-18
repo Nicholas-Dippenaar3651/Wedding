@@ -53,12 +53,12 @@ document.addEventListener("keydown", (e) => {
 let currentPage = "todo";
 const pageBtns = document.querySelectorAll("nav.pages button");
 function showPage(name) {
-  if (!["todo", "tydlyn", "begroting"].includes(name)) name = "todo";
+  if (!["todo", "tydlyn", "fotos", "begroting"].includes(name)) name = "todo";
   // the budget is for signed-in editors only; the #begroting link is kept so signing in opens it (setEditor)
   const keepHash = name === "begroting" && !server.editor;
   if (keepHash) name = "todo";
   currentPage = name;
-  document.body.dataset.page = name; // CSS shows .todo-only options on the list only
+  document.body.dataset.page = name; // CSS shows .todo-only options on the list only, and hides the pinned bar on Fotos
   pageBtns.forEach((b) => b.setAttribute("aria-selected", b.dataset.page === name));
   document.querySelectorAll(".page").forEach((p) => (p.hidden = p.id !== "page-" + name));
   // "Kies take" lives in the pinned bar but only belongs to the list

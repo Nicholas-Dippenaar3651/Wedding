@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="af">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Christy &amp; Nicholas – Ons Dippenaar Droom</title>
+<meta name="description" content="Christy &amp; Nicholas trou op 19 Desember 2026.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&amp;family=Outfit:wght@300;400;500;600&amp;family=Playball&amp;family=Great+Vibes&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/menu.css">
+<style>
+:root{
+  --navy:#141A3A; --ink:#1C1B4D; --muted:#4A5578; --link:#34507F;
+  --gold:#F4C430; --gold-deep:#D9A21B; --seed:#5A3A1E;
+  --mist:#D6DCF0; --paper:#F5F7FC; --white:#FFFFFF;
+  --serif:'Alegreya SC', Georgia, serif; --script:'Playball', cursive;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 'Outfit', system-ui, sans-serif;overflow-x:hidden}
+a{color:var(--ink)}a:hover{color:#3D5A8C}
+a:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+img{display:block}
+
+/* sunflower ornament: line – flower – line */
+.divider{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--gold-deep)}
+.divider::before,.divider::after{content:"";height:1px;width:56px;background:currentColor;opacity:.6}
+.divider svg{width:22px;height:22px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:clamp(30rem, 82vh, 38rem);display:flex;align-items:center;justify-content:center;background:var(--navy);overflow:hidden;padding:32px 12px 72px}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(18,24,62,.58) 0%, rgba(18,24,62,.68) 60%, rgba(18,24,62,.84) 100%)}
+.crest{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:100%;max-width:620px}
+.crest svg.seal{flex:1 1 auto;min-width:0;width:100%;max-width:400px;height:auto;overflow:visible;filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}
+.bouquet{flex:none;width:clamp(58px, 17vw, 118px);position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+.bouquet.l{margin-right:-5%;transform:rotate(-8deg)}
+.bouquet.r{margin-left:-5%;transform:scaleX(-1) rotate(-8deg)}
+
+/* ---------- passport ---------- */
+.passport{position:relative;z-index:2;margin-top:-48px;padding:0 16px 8px;background:linear-gradient(to bottom, transparent 48px, var(--navy) 48px)}
+.card{position:relative;max-width:900px;margin:0 auto;background:var(--white);border-radius:18px;border-top:5px solid var(--gold);box-shadow:0 14px 40px rgba(28,27,77,.14);padding:24px clamp(18px, 4vw, 36px) 26px;overflow:hidden}
+.card .corner{position:absolute;top:-26px;right:-26px;width:96px;pointer-events:none}
+.card h2{display:flex;align-items:center;gap:10px;margin:0 90px 18px 0;font-size:14px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
+.card h2 svg{width:20px;height:20px;flex:none}
+.facts{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:16px 20px;margin:0}
+.facts div{display:flex;flex-direction:column;gap:2px;padding-left:12px;border-left:2px solid rgba(244,196,48,.55)}
+.facts dt{font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--muted)}
+.facts dd{margin:0;font-size:17px;font-weight:500}
+.facts a{color:var(--link);text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:3px}
+/* boarding-pass tear line with notches */
+.tear{position:relative;margin:24px calc(-1 * clamp(18px, 4vw, 36px)) 18px;border-top:2px dashed var(--mist)}
+.tear::before,.tear::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--navy)}
+.tear::before{left:-10px}.tear::after{right:-10px}
+.quote{max-width:600px;margin:0 auto;font-family:var(--script);font-size:clamp(18px, 2.4vw, 22px);line-height:1.4;text-align:center}
+.quote cite{display:block;margin-top:6px;font:500 12px/1 'Outfit', sans-serif;font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- rsvp ---------- */
+.rsvp{position:relative;background:var(--navy);color:var(--white);padding:64px 16px 36px;overflow:hidden}
+.rsvp .corner{position:absolute;bottom:-24px;left:-24px;width:170px;max-width:30%;opacity:.9;pointer-events:none}
+.rsvp-grid{position:relative;max-width:880px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:40px;align-items:center}
+.polaroid{position:relative;justify-self:center;width:100%;max-width:360px;margin:0;background:var(--white);padding:10px 10px 34px;border-radius:4px;transform:rotate(-2deg);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.polaroid img.photo{width:100%;border-radius:2px}
+.polaroid figcaption{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:var(--script);font-size:17px;color:var(--ink)}
+.polaroid .pin{position:absolute;top:-30px;right:-26px;width:84px;transform:rotate(14deg);filter:drop-shadow(0 3px 6px rgba(0,0,0,.3))}
+.rsvp-text{display:flex;flex-direction:column;gap:16px}
+.rsvp-text h2{margin:0;font-family:var(--script);font-weight:400;font-size:clamp(30px, 4vw, 40px);line-height:1.15}
+.rsvp-text .divider{justify-content:flex-start;color:var(--gold)}
+.rsvp-text .divider::before{display:none}
+.countdown{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:8px;max-width:340px}
+.countdown[hidden]{display:none}
+.countdown div{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(244,196,48,.5)}
+.countdown b{font-family:var(--serif);font-weight:700;font-size:clamp(22px, 3vw, 28px);line-height:1;color:var(--gold)}
+.countdown span{font-size:10px;letter-spacing:.14em;color:var(--mist)}
+.married{margin:0;font-family:'Great Vibes', cursive;font-size:32px;color:var(--gold)}
+.names{margin:4px 0 0;font-size:16px}
+.tag{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;margin:44px 0 0;font-size:13px;letter-spacing:.12em;color:var(--mist)}
+.tag svg{width:14px;height:14px}
+</style>
+</head>
+<body>
+
+<!-- one sunflower, reused everywhere with <use href="#sf"> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sf" viewBox="-30 -30 60 60">
+    <g fill="#D9A21B">
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(15)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(45)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(75)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(105)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(135)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(165)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(195)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(225)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(255)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(285)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(315)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(345)"/>
+    </g>
+    <g fill="#F4C430">
+      <ellipse rx="5" ry="12" cy="-16"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(30)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(60)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(90)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(120)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(150)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(180)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(210)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(240)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(270)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(300)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(330)"/>
+    </g>
+    <circle r="9" fill="#5A3A1E"/>
+    <circle r="5.5" fill="#3E2713"/>
+  </symbol>
+</svg>
+
+<!-- MENU: opens a panel on the right with links to this page and the planner -->
+<button class="site-menu-btn" id="siteMenuBtn" aria-expanded="false" aria-controls="siteMenu">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>MENU
+</button>
+<div class="site-scrim" id="siteScrim"></div>
+<nav class="site-menu" id="siteMenu" aria-label="Webwerf">
+  <div class="site-menu-head">
+    <p>C&amp;N</p>
+    <button class="site-menu-close" id="siteMenuClose" aria-label="Maak spyskaart toe">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <h3><svg aria-hidden="true"><use href="#sf"></use></svg>OP HIERDIE BLADSY</h3>
+  <ul>
+    <li><a href="#tuis" aria-current="page">Tuis</a></li>
+    <li><a href="#paspoort">Paspoort na die huwelik</a></li>
+    <li><a href="#rsvp">Aftelling</a></li>
+  </ul>
+  <h3><svg aria-hidden="true"><use href="#sf"></use></svg>BEPLANNING</h3>
+  <ul>
+    <li><a href="beplanning.html#tydlyn">Tydlyn<small>Die program vir die troudag</small></a></li>
+    <li><a href="beplanning.html#todo">Voorbereiding<small>Take en lyste</small></a></li>
+    <li><a href="beplanning.html#fotos">Fotos<small>Watter foto's wanneer geneem word</small></a></li>
+    <li><a href="beplanning.html#begroting">Begroting<small>Net vir redigeerders</small></a></li>
+  </ul>
+  <div class="site-menu-foot">
+    <img src="assets/sf_corner_br.webp" alt="" aria-hidden="true">
+    <p># OnsDippenaarDroom</p>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header id="tuis" class="hero">
+  <img class="hero-photo" src="assets/cover.jpg" alt="Christy en Nicholas wat mekaar se oë toedruk">
+  <div class="crest">
+    <img class="bouquet l" src="assets/bouquet.webp" alt="" aria-hidden="true">
+    <svg class="seal" viewBox="0 0 600 600" role="img" aria-label="Christy &amp; Nicholas, Hooglied 8:6-7, C&amp;N, 19.12.2026, Ons Dippenaar Droom">
+      <defs>
+        <path id="arcTop" d="M 85 300 A 215 215 0 0 1 515 300"></path>
+        <path id="arcBottom" d="M 72 300 A 228 228 0 0 0 528 300"></path>
+      </defs>
+      <!-- sunflower wreath ring -->
+      <circle cx="300" cy="300" r="186" fill="none" stroke="#F4C430" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round" opacity=".85"></circle>
+      <circle cx="300" cy="300" r="172" fill="none" stroke="#F4C430" stroke-width="1" opacity=".45"></circle>
+      <use href="#sf" x="278" y="92" width="44" height="44"></use>
+      <use href="#sf" x="278" y="464" width="44" height="44"></use>
+      <text fill="#FFFFFF" style="font-family: 'Alegreya SC', Georgia, serif; font-size: 46px; letter-spacing: 6px">
+        <textPath href="#arcTop" startOffset="50%" text-anchor="middle">Christy &amp; Nicholas</textPath>
+      </text>
+      <text fill="#FFFFFF" dominant-baseline="hanging" style="font-family: 'Alegreya SC', Georgia, serif; font-size: 40px; letter-spacing: 6px">
+        <textPath href="#arcBottom" startOffset="50%" text-anchor="middle">Ons Dippenaar Droom</textPath>
+      </text>
+      <text x="300" y="205" fill="#F4C430" text-anchor="middle" style="font-family: 'Alegreya SC', Georgia, serif; font-size: 24px; font-style: italic">Hooglied 8: 6-7</text>
+      <text x="300" y="340" fill="#FFFFFF" text-anchor="middle" style="font-family: 'Alegreya SC', Georgia, serif; font-size: 128px">C&amp;N</text>
+      <text x="300" y="410" fill="#FFFFFF" text-anchor="middle" style="font-family: 'Alegreya SC', Georgia, serif; font-size: 26px; letter-spacing: 3px">19 . 12 . 2026</text>
+    </svg>
+    <img class="bouquet r" src="assets/bouquet.webp" alt="" aria-hidden="true">
+  </div>
+</header>
+
+<!-- PASSPORT / AT A GLANCE -->
+<section id="paspoort" class="passport" aria-labelledby="paspoort-titel">
+  <div class="card">
+    <img class="corner" src="assets/sf_corner_tr.webp" alt="" aria-hidden="true">
+    <h2 id="paspoort-titel"><svg aria-hidden="true"><use href="#sf"></use></svg>Paspoort na die huwelik</h2>
+    <dl class="facts">
+      <div><dt>VOLLE NAME</dt><dd>Christy &amp; Nicholas</dd></div>
+      <div><dt>DATUM</dt><dd>19 Desember 2026</dd></div>
+      <div><dt>TYD</dt><dd>12h30 – 13h00</dd></div>
+      <div><dt>PLEK VAN SEREMONIE</dt><dd>In die bos, <a href="https://maps.app.goo.gl/Svv7xH45yseWtKWi8" target="_blank" rel="noopener">Swaarbekom</a></dd></div>
+      <div><dt>KLEREDRAG</dt><dd>Formeel</dd></div>
+    </dl>
+    <div class="tear" aria-hidden="true"></div>
+    <blockquote class="quote">En as ek die dag my hand in joune sit sal ek my padkaarte bêre met die wete: my reise op soek na jou is nou verby.<cite>Antjie Krog</cite></blockquote>
+  </div>
+</section>
+
+<!-- RSVP + FOOTER -->
+<section id="rsvp" class="rsvp" aria-labelledby="rsvp-titel">
+  <img class="corner" src="assets/sf_corner_br.webp" alt="" aria-hidden="true">
+  <div class="rsvp-grid">
+    <figure class="polaroid">
+      <img class="photo" src="assets/photo_bumper.jpg" alt="Christy en Nicholas wat lag in botsmotors">
+      <img class="pin" src="assets/bouquet.webp" alt="" aria-hidden="true">
+      <figcaption>Christy &amp; Nicholas</figcaption>
+    </figure>
+    <div class="rsvp-text">
+      <h2 id="rsvp-titel">Sien uit om saam julle te vier.</h2>
+      <div class="divider" aria-hidden="true"><svg><use href="#sf"></use></svg></div>
+      <div id="countdown" class="countdown" role="timer" aria-label="Aftelling tot 19 Desember 2026">
+        <div><b data-cd="d">–</b><span>DAE</span></div>
+        <div><b data-cd="h">–</b><span>URE</span></div>
+        <div><b data-cd="m">–</b><span>MINUTE</span></div>
+        <div><b data-cd="s">–</b><span>SEKONDES</span></div>
+      </div>
+      <p id="married" class="married" hidden>Ons is getroud!</p>
+      <p class="names">Christy &amp; Nicholas</p>
+    </div>
+  </div>
+  <p class="tag"><svg aria-hidden="true"><use href="#sf"></use></svg># OnsDippenaarDroom<svg aria-hidden="true"><use href="#sf"></use></svg></p>
+</section>
+
+<script>
+(function () {
+  var target = new Date(2026, 11, 19, 12, 30).getTime(); // 19 Des 2026, 12h30
+  var box = document.getElementById('countdown');
+  var done = document.getElementById('married');
+  var el = {};
+  ['d', 'h', 'm', 's'].forEach(function (k) { el[k] = box.querySelector('[data-cd="' + k + '"]'); });
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+  function tick() {
+    var t = Math.floor((target - Date.now()) / 1000);
+    if (t <= 0) { box.hidden = true; done.hidden = false; clearInterval(timer); return; }
+    el.d.textContent = Math.floor(t / 86400);
+    el.h.textContent = pad(Math.floor(t % 86400 / 3600));
+    el.m.textContent = pad(Math.floor(t % 3600 / 60));
+    el.s.textContent = pad(t % 60);
+  }
+  var timer = setInterval(tick, 1000);
+  tick();
+})();
+</script>
+<script src="js/menu.js"></script>
+</body>
+</html>

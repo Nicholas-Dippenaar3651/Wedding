@@ -1,0 +1,178 @@
+/* The MENU button and the navy panel that slides in from the right.
+   Shared by the landing page (index.html) and the planner (beplanning.html); opened and closed by js/menu.js.
+   The panel looks the same in light and dark themes, so its colours are fixed here rather than taken from styles.css. */
+.site-menu-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px 9px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #f4c430;
+  color: #1c1b4d;
+  font: 600 13px/1 "Outfit", system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+.site-menu-btn:hover {
+  background: #ffd24d;
+}
+.site-menu-btn svg,
+.site-menu-close svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+}
+.site-menu-btn:focus-visible,
+.site-menu a:focus-visible,
+.site-menu button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+.site-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  background: rgba(10, 13, 32, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0s 0.25s;
+}
+.site-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  width: min(300px, 86vw);
+  display: flex;
+  flex-direction: column;
+  background: #141a3a;
+  color: #fff;
+  font-family: "Outfit", system-ui, sans-serif;
+  border-left: 3px solid #f4c430;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.35);
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.3s ease, visibility 0s 0.3s;
+}
+body.menu-open .site-scrim {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s;
+}
+body.menu-open .site-menu {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-scrim,
+  .site-menu,
+  body.menu-open .site-scrim,
+  body.menu-open .site-menu {
+    transition: none;
+  }
+}
+.site-menu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 18px 10px 22px;
+}
+.site-menu-head p {
+  margin: 0;
+  font-family: "Alegreya SC", Georgia, serif;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+}
+.site-menu-close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(244, 196, 48, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: #f4c430;
+  cursor: pointer;
+}
+.site-menu-close svg {
+  width: 16px;
+  height: 16px;
+}
+.site-menu h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 22px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #f4c430;
+}
+.site-menu h3 svg {
+  width: 14px;
+  height: 14px;
+}
+.site-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 12px;
+}
+.site-menu a {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+.site-menu a:hover {
+  background: rgba(244, 196, 48, 0.12);
+  color: #fff;
+}
+.site-menu a[aria-current="page"] {
+  background: rgba(244, 196, 48, 0.16);
+  box-shadow: inset 3px 0 0 #f4c430;
+}
+.site-menu a small {
+  font-size: 12px;
+  color: #d6dcf0;
+  opacity: 0.8;
+}
+.site-menu-foot {
+  position: relative;
+  margin-top: auto;
+  min-height: 150px;
+}
+.site-menu-foot img {
+  position: absolute;
+  bottom: -20px;
+  left: -20px;
+  width: 150px;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.site-menu-foot p {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  margin: 0;
+  font-family: "Playball", cursive;
+  font-size: 18px;
+  color: #f4c430;
+}

@@ -5,10 +5,12 @@ A shared wedding-planning app in Afrikaans. Guests can view the preparation chec
 ## Features
 
 - Preparation checklist with groups, search, filters, and bulk editing.
+- Photo list (Fotos): the photos to take, in order, grouped by moment, and ticked off on the day.
 - Wedding-day timeline with event editing, a live mode, and a countdown to the wedding date.
 - Budget and payment reminders visible only to signed-in editors.
 - Real-time updates for everyone with the page open.
 - Light, dark, and automatic themes.
+- A guest landing page as the home page (`public/index.html`, images in `public/assets/`) with the invitation details and a countdown. The planner itself is at `/beplanning.html`.
 - MongoDB Atlas storage, with local JSON copies and periodic backups when running on a persistent local server.
 
 ## Requirements
@@ -40,7 +42,7 @@ A shared wedding-planning app in Afrikaans. Guests can view the preparation chec
    npm start
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000).
+4. Open [http://localhost:3000](http://localhost:3000) for the landing page, or [http://localhost:3000/beplanning.html](http://localhost:3000/beplanning.html) for the planner.
 
 The server uses the `PORT` environment variable if set (otherwise port 3000) and listens on `127.0.0.1` by default. Set `HOST=0.0.0.0` to accept connections from other devices or a hosting platform.
 
@@ -61,7 +63,7 @@ Keep `.env` and database credentials private. Do not commit them to source contr
 
 MongoDB is the primary shared data store. The app loads the document with `_id: "state"` from the `data` collection on startup. If that document does not exist, the server can initialize it from `data/data.json` when that file is present.
 
-Anyone with the site URL can view the planner unless `TROUE_LEES_WAGWOORD` is set. Editing requires the editor password. The budget is only sent to authenticated editors.
+Anyone with the site URL can view the planner unless `TROUE_LEES_WAGWOORD` is set. Editing requires the editor password, including the photo list (Fotos), which holds up to 500 photos. The one exception: anyone who can open the page can tick a photo off as taken (or untick it). The budget is only sent to authenticated editors.
 
 When running on a local machine with a persistent filesystem, updates are also written to `data/data.json`, with periodic copies in `data/rugsteun/`. These local files are not a substitute for backing up MongoDB. Hosting services with ephemeral filesystems may discard local files on restart or sleep; use MongoDB for persistent hosted data.
 

@@ -36,6 +36,7 @@ function eventRow(ev, card) {
   const row = el("div", { className: "ev" + (card.classList.contains("ev-form") ? " editing" : "") }, el("div", { className: "time", textContent: ev ? ev.time : "" }), el("div", { className: "node" }), card);
   row.dataset.groups = ev ? groupsOf(ev).join(" ") : "";
   row.dataset.time = ev ? ev.time : "";
+  if (ev) row.dataset.id = ev.id;
   // the dot and the card's edge take the colour of the first group
   const first = ev?.who.find((k) => G[k]);
   if (first) row.style.setProperty("--g", `var(--g-${first})`);
@@ -63,12 +64,21 @@ function clashBadges(ev) {
 function eventCard(ev) {
   const notes = Object.entries(ev.notes).filter(([k]) => G[k]);
   const badges = clashBadges(ev);
+  // drag to another place, or use the arrow keys on it; hidden until signed in (body.readonly)
+  const handle = el("button", { className: "drag-handle", type: "button", title: "Sleep om te skuif (of gebruik die pyltjie-sleutels)", "aria-label": `Skuif "${ev.title}"` }, icon("grip"));
+  handle.addEventListener("pointerdown", (e) => startEvDrag(e, ev, handle.closest(".ev")));
+  handle.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    e.preventDefault();
+    keyMoveEvent(ev, e.key === "ArrowUp" ? -1 : 1);
+  });
   return el(
     "div",
     { className: "card" },
     el(
       "div",
       { className: "card-top" },
+      handle,
       el("div", { className: "title" }, highlight(ev.title)),
       el(
         "span",
@@ -196,6 +206,191 @@ document.getElementById("addEventBtn").addEventListener("click", () => {
   editingEv = "new";
   renderTimeline();
 });
+
+/* =================================================
+   DRAG AND DROP (signed in): the list is sorted by time, so an item dropped next to another
+   takes that item's time, and lands just before or after it among the items at that time
+   ================================================= */
+let evDrag = null; // { id, row, ghost, line, x, y, anchor: { id, after }, raf } while dragging
+
+// move item `id` just after (or before) `anchorId`, at the anchor's time; the items at that time are numbered 0, 1, 2…
+function placeEvent(id, anchorId, after) {
+  const item = events.find((e) => e.id === id);
+  const anchor = events.find((e) => e.id === anchorId);
+  if (!item || !anchor || item === anchor) return;
+  const slot = sortedEvents().filter((e) => e.time === anchor.time && e.id !== id);
+  slot.splice(slot.indexOf(anchor) + (after ? 1 : 0), 0, item);
+  const changes = slot.map((e, k) => ({ id: e.id, time: anchor.time, seq: k })).filter((c, k) => slot[k].seq !== c.seq || slot[k].time !== c.time);
+  if (!changes.length) return;
+  const byId = Object.fromEntries(changes.map((c) => [c.id, c]));
+  events = events.map((e) => (byId[e.id] ? { ...e, time: byId[e.id].time, seq: byId[e.id].seq } : e));
+  send({ op: "reorder", kind: "events", items: changes });
+  renderTimeline();
+  if (item.time !== anchor.time) toast(`"${item.title}" is nou om ${anchor.time}. Wysig dit as dit 'n ander tyd moet wees.`);
+}
+
+// arrow keys on the handle: one place up or down among the items showing, taking the neighbour's time
+function keyMoveEvent(ev, dir) {
+  const rows = [...timelineEl.querySelectorAll(".ev[data-id]")].filter((r) => r.offsetParent);
+  const i = rows.findIndex((r) => r.dataset.id === ev.id);
+  const nb = rows[i + dir];
+  if (i < 0 || !nb) return;
+  placeEvent(ev.id, nb.dataset.id, dir > 0);
+  timelineEl.querySelector(`.ev[data-id="${ev.id}"] .drag-handle`)?.focus();
+}
+
+function startEvDrag(e, ev, row) {
+  if (e.button !== 0 || editingEv) return;
+  e.preventDefault();
+  const ghost = el("div", { className: "drag-ghost", textContent: `${ev.time} – ${ev.title}` });
+  document.body.append(ghost);
+  row.classList.add("dragging");
+  document.body.classList.add("is-dragging");
+  evDrag = { id: ev.id, row, ghost, line: el("div", { className: "ev-drop-line", "aria-hidden": "true" }), x: e.clientX, y: e.clientY, anchor: null };
+  moveEvDrag(e);
+  window.addEventListener("pointermove", moveEvDrag);
+  window.addEventListener("pointerup", endEvDrag);
+  window.addEventListener("pointercancel", cancelEvDrag);
+  window.addEventListener("keydown", escEvDrag);
+  evDrag.raf = requestAnimationFrame(autoScrollEv);
+}
+
+function moveEvDrag(e) {
+  evDrag.x = e.clientX;
+  evDrag.y = e.clientY;
+  evDrag.ghost.style.transform = `translate(${evDrag.x + 14}px, ${evDrag.y - 16}px)`;
+  locateEvDrop();
+}
+
+// the line goes above the card under the pointer (top half) or below it (bottom half); that card is the anchor
+function locateEvDrop() {
+  const under = document.elementFromPoint(evDrag.x, evDrag.y);
+  if (!under || !timelineEl.contains(under)) {
+    evDrag.line.remove();
+    evDrag.anchor = null;
+    return;
+  }
+  const row = under.closest(".ev[data-id]:not(.dragging)");
+  if (!row) return;
+  const r = row.getBoundingClientRect();
+  const after = evDrag.y >= r.top + r.height / 2;
+  after ? row.after(evDrag.line) : row.before(evDrag.line);
+  evDrag.anchor = { id: row.dataset.id, after };
+}
+
+// scroll the page while dragging near the top (under the pinned bar) or bottom edge
+function autoScrollEv() {
+  if (!evDrag) return;
+  const top = document.getElementById("pinned").getBoundingClientRect().bottom + 20;
+  const bottom = innerHeight - 50;
+  const speed = evDrag.y < top ? (evDrag.y - top) / 4 : evDrag.y > bottom ? (evDrag.y - bottom) / 4 : 0;
+  if (speed) {
+    scrollBy(0, Math.max(-20, Math.min(20, speed)));
+    locateEvDrop();
+  }
+  evDrag.raf = requestAnimationFrame(autoScrollEv);
+}
+
+function stopEvDrag() {
+  cancelAnimationFrame(evDrag.raf);
+  evDrag.ghost.remove();
+  evDrag.line.remove();
+  evDrag.row.classList.remove("dragging");
+  document.body.classList.remove("is-dragging");
+  window.removeEventListener("pointermove", moveEvDrag);
+  window.removeEventListener("pointerup", endEvDrag);
+  window.removeEventListener("pointercancel", cancelEvDrag);
+  window.removeEventListener("keydown", escEvDrag);
+  evDrag = null;
+}
+function endEvDrag() {
+  const { id, anchor, line } = evDrag;
+  const dropped = line.isConnected && anchor;
+  stopEvDrag();
+  if (dropped) placeEvent(id, anchor.id, anchor.after);
+  flushPending();
+}
+function cancelEvDrag() {
+  stopEvDrag();
+  flushPending();
+}
+const escEvDrag = (e) => e.key === "Escape" && cancelEvDrag();
+
+/* =================================================
+   EXPORT: the timeline as an Excel file (js/xlsx.js), for everyone or for one group
+   ================================================= */
+function exportDialog() {
+  const choices = [{ key: "alles", label: "Alles" }, ...GROUPS].map((g) => {
+    const n = g.key === "alles" ? events.length : events.filter((e) => groupsOf(e).includes(g.key)).length;
+    const radio = el("input", { type: "radio", name: "export-group", value: g.key, checked: g.key === activeGroup, disabled: !n });
+    const lab = el("label", { className: "opt export-choice" }, radio, el("span", { textContent: g.label }), el("span", { className: "n", textContent: n }));
+    if (g.key !== "alles") lab.style.setProperty("--c", `var(--g-${g.key})`);
+    return lab;
+  });
+  const close = () => ov.remove();
+  const submit = (e) => {
+    e.preventDefault();
+    const key = ov.querySelector("input[name=export-group]:checked")?.value || "alles";
+    downloadTimeline(key);
+    close();
+  };
+  const ov = el(
+    "div",
+    // braces matter: an onclick property that returns false cancels the click (and with it the form submit)
+    {
+      className: "modal",
+      onclick: (e) => {
+        if (e.target === ov) close();
+      },
+    },
+    el(
+      "form",
+      { className: "modal-box login-form", role: "dialog", "aria-modal": "true", "aria-label": "Laai die tydlyn af", onsubmit: submit },
+      el("h2", { textContent: "Laai die tydlyn af" }),
+      el("p", { className: "export-hint", textContent: "Kies vir wie. 'n Groep kry net sy eie items en notas." }),
+      el("div", { className: "export-choices", role: "radiogroup", "aria-label": "Groep" }, choices),
+      el("div", { className: "form-actions" }, el("button", { type: "button", className: "btn", textContent: "Kanselleer", onclick: close }), el("button", { type: "submit", className: "btn primary", textContent: "Laai Excel af" })),
+    ),
+  );
+  ov.addEventListener("keydown", (e) => e.key === "Escape" && close());
+  document.body.append(ov);
+  (ov.querySelector("input:checked") || ov.querySelector("input:not(:disabled)"))?.focus();
+}
+
+// one row per item: time, part of the day, what, groups, and the notes (only the chosen group's, for a group)
+function downloadTimeline(key) {
+  const g = key === "alles" ? null : G[key];
+  const list = sortedEvents().filter((e) => !g || groupsOf(e).includes(key));
+  const labels = (keys) => keys.filter((k) => G[k]).map((k) => G[k].label);
+  const rows = list.map((e) => [
+    e.time,
+    dayPart(e.time),
+    e.title,
+    labels(groupsOf(e)).join(", "),
+    g
+      ? e.notes[key] || ""
+      : Object.entries(e.notes)
+          .filter(([k]) => G[k])
+          .map(([k, text]) => `${G[k].label}: ${text}`)
+          .join("\n"),
+  ]);
+  const name = g ? g.label : "Alles";
+  const when = settings.date ? " · " + document.querySelector("#when span")?.textContent : "";
+  const blob = makeXlsx({
+    sheet: `Tydlyn ${name}`,
+    title: `Tydlyn: ${name}${when}`,
+    headers: ["Tyd", "Dagdeel", "Wat", "Groepe", g ? `Nota vir ${g.label}` : "Notas"],
+    widths: [8, 10, 44, 28, 56],
+    rows,
+  });
+  const a = el("a", { href: URL.createObjectURL(blob), download: `Tydlyn - ${name.replace(/[\\/:*?"<>|]/g, "")}.xlsx` });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast(`${list.length} ${list.length === 1 ? "item" : "items"} afgelaai.`);
+}
+document.getElementById("exportBtn").addEventListener("click", exportDialog);
 
 /* =================================================
    LIVE MODE: follows the clock on the wedding day

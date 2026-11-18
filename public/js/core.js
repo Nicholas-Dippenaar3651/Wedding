@@ -154,6 +154,7 @@ const PERIODS = SECTIONS.reduce((list, s) => {
 /* ---------------- state: filled from the server ---------------- */
 let todos = [];
 let events = [];
+let photos = []; // the Fotos list
 let settings = {};
 let budget = null; // { total, items }: only sent by the server to signed-in editors, null otherwise
 
@@ -185,7 +186,7 @@ function setEditor(on) {
   server.editor = on;
   document.body.classList.toggle("readonly", !on);
   if (!on) {
-    editing = editingEv = null;
+    editing = editingEv = editingPhoto = null;
     if (!adminEl.hidden) toggleGroupAdmin();
     if (picking) setPicking(false);
     budget = null; // forget the budget straight away; the server stops sending it too
@@ -196,6 +197,7 @@ function setEditor(on) {
   renderTimeline();
   renderSettings();
   renderBudget();
+  renderPhotos();
 }
 
 function renderAuth() {
@@ -271,6 +273,7 @@ function applyRemote(data) {
   budget = server.editor && data.budget ? data.budget : null;
   todos = data.todos;
   events = data.events;
+  photos = data.photos || [];
   settings = data.settings || {};
   GROUPS = data.groups;
   applyGroups();
@@ -281,7 +284,7 @@ function applyRemote(data) {
 
 // hold back a remote update while someone is typing or has a form open, so nothing they type is lost
 let renderPending = false;
-const busy = () => editing || editingEv || drag || document.body.classList.contains("bdragging") || (document.activeElement?.matches("input:not([type=checkbox]):not(#search)") && document.activeElement.closest("#sections, #timeline, #groupAdmin"));
+const busy = () => editing || editingEv || editingPhoto || drag || photoDrag || evDrag || document.body.classList.contains("bdragging") || (document.activeElement?.matches("input:not([type=checkbox]):not(#search)") && document.activeElement.closest("#sections, #timeline, #groupAdmin, #photoList"));
 function scheduleRender() {
   if (busy()) return (renderPending = true);
   renderPending = false;
@@ -291,6 +294,7 @@ function scheduleRender() {
   renderSettings();
   renderGroupAdmin();
   renderBudget();
+  renderPhotos();
   if (query) runSearch();
 }
 const flushPending = () => renderPending && setTimeout(scheduleRender, 0);
@@ -365,6 +369,23 @@ function removeEvent(id) {
   send({ op: "delete", kind: "events", id });
   renderTimeline();
   renderTabs();
+}
+function savePhoto(p) {
+  photos = upsert(photos, p);
+  send({ op: "upsert", kind: "photos", item: p });
+  renderPhotos();
+  flushPending();
+}
+// ticking a photo off: allowed without signing in, so it sends only the tick, not the whole photo
+function setPhotoDone(id, done) {
+  photos = photos.map((p) => (p.id === id ? { ...p, done } : p));
+  send({ op: "done", kind: "photos", id, done });
+  renderPhotos();
+}
+function removePhoto(id) {
+  photos = photos.filter((p) => p.id !== id);
+  send({ op: "delete", kind: "photos", id });
+  renderPhotos();
 }
 function saveSettings(patch) {
   settings = { ...settings, ...patch };

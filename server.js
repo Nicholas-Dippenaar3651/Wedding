@@ -4,6 +4,7 @@
 //
 // Anyone who opens the page can read it; changes need the edit password (sign in on the page).
 // The budget (Begroting) is the exception: it is only ever sent to signed-in editors.
+// One change is open to everyone: ticking a photo (Fotos) off as taken.
 // The data is read from MongoDB once at startup, so stop the server before changing the
 // document directly in Atlas or Compass, and start it again afterwards.
 // If MongoDB can't be reached at startup, the server opens data.json read-only.
@@ -37,14 +38,14 @@ try {
 }
 
 const DIR = __dirname;
-const PUBLIC = path.join(DIR, "public"); // the page: index.html, css/, js/
+const PUBLIC = path.join(DIR, "public"); // the pages: index.html (landing), beplanning.html (planner), css/, js/, assets/
 const DATA_DIR = path.join(DIR, "data"); // written by the server: data.json, sessions.json, rugsteun/
 const DATA = path.join(DATA_DIR, "data.json");
 const BACKUPS = path.join(DATA_DIR, "rugsteun");
 const PORT = Number(process.env.PORT);
 const HOST = process.env.HOST;
 const SESSIONS = path.join(DATA_DIR, "sessions.json");
-const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".jpg": "image/jpeg", ".webp": "image/webp" };
 
 // these used to sit next to server.js: move them into data/ once
 fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -99,6 +100,11 @@ const clean = {
     const hex = (c) => (/^#[0-9a-f]{6}$/i.test(c) ? c : null);
     return { key: g.key, label: str(g.label, 60), color: hex(g.color) || "#6b6b6b", dark: hex(g.dark) };
   },
+  // the photo list (Fotos): what to photograph, when and with whom; seq is the order to take them in
+  photos(p) {
+    if (!p || !KEY.test(p.id) || !str(p.title).trim()) return null;
+    return { id: p.id, when: str(p.when, 60), title: str(p.title, 200), people: str(p.people, 300), note: str(p.note, 500), done: !!p.done, seq: num(p.seq) };
+  },
   settings(s) {
     const date = s && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : null;
     return { date };
@@ -125,7 +131,7 @@ function money(v) {
 }
 
 // budget: only ever sent to signed-in editors (see snapshot())
-let state = { rev: 0, groups: [], todos: [], events: [], settings: { date: null }, budget: { total: 0, items: [] } };
+let state = { rev: 0, groups: [], todos: [], events: [], photos: [], settings: { date: null }, budget: { total: 0, items: [] } };
 let collection = null; // null: MongoDB was unreachable at startup, the server is read-only
 
 function readLocal() {
@@ -146,6 +152,7 @@ function load(doc) {
     groups: (Array.isArray(doc.groups) ? doc.groups : []).map(clean.group).filter(Boolean),
     todos: cleanList("todos", doc.todos),
     events: cleanList("events", doc.events),
+    photos: cleanList("photos", doc.photos),
     settings: clean.settings(doc.settings),
     budget: clean.budget(doc.budget),
   };
@@ -249,11 +256,16 @@ const LISTS = {
   todos: { get: () => state.todos, set: (l) => (state.todos = l), clean: clean.todos },
   events: { get: () => state.events, set: (l) => (state.events = l), clean: clean.events },
   budget: { get: () => state.budget.items, set: (l) => (state.budget.items = l), clean: clean.budgetItem },
+  photos: { get: () => state.photos, set: (l) => (state.photos = l), clean: clean.photos },
 };
 function upsertInto(list, item) {
   const i = list.get().findIndex((x) => x.id === item.id);
   i < 0 ? list.get().push(item) : (list.get()[i] = item);
 }
+
+const MAX_PHOTOS = 500;
+// the only change that doesn't need signing in: ticking a photo off as taken (or not)
+const isOpenOp = (op) => op?.op === "done" && op.kind === "photos";
 
 function apply(op) {
   const kind = op.kind;
@@ -262,6 +274,7 @@ function apply(op) {
     case "upsert": {
       const item = list?.clean(op.item);
       if (!item) return false;
+      if (kind === "photos" && state.photos.length >= MAX_PHOTOS && !state.photos.some((x) => x.id === item.id)) return false;
       upsertInto(list, item);
       return true;
     }
@@ -269,9 +282,36 @@ function apply(op) {
       if (!list) return false;
       list.set(list.get().filter((x) => x.id !== op.id));
       return true;
+    case "done": {
+      // ticking a photo off as taken: the one change anyone may make without signing in (see isOpenOp)
+      const p = kind === "photos" && state.photos.find((x) => x.id === op.id);
+      if (!p) return false;
+      p.done = !!op.done;
+      return true;
+    }
     case "reorder": {
+      if (!Array.isArray(op.items)) return false;
+      // timeline items dragged to a new place: a new time (the neighbour's) and position within that time
+      if (kind === "events") {
+        op.items.slice(0, 2000).forEach((c) => {
+          const e = state.events.find((x) => x.id === c?.id);
+          if (e && /^\d{2}:\d{2}$/.test(c.time)) {
+            e.time = c.time;
+            e.seq = num(c.seq);
+          }
+        });
+        return true;
+      }
+      // photos moved up or down: new positions only
+      if (kind === "photos") {
+        op.items.slice(0, MAX_PHOTOS).forEach((c) => {
+          const p = state.photos.find((x) => x.id === c?.id);
+          if (p) p.seq = num(c.seq);
+        });
+        return true;
+      }
       // drag and drop: new section and position for a batch of TODOs
-      if (kind !== "todos" || !Array.isArray(op.items)) return false;
+      if (kind !== "todos") return false;
       op.items.slice(0, 2000).forEach((c) => {
         const t = state.todos.find((x) => x.id === c?.id);
         if (t) {
@@ -392,7 +432,7 @@ function noteFailure(ip) {
 /* ---------------- http ---------------- */
 function send(res, status, body, type = "application/json; charset=utf-8", extra = {}) {
   res.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", ...extra });
-  res.end(typeof body === "string" ? body : JSON.stringify(body));
+  res.end(typeof body === "string" || Buffer.isBuffer(body) ? body : JSON.stringify(body));
 }
 
 function readBody(req) {
@@ -445,10 +485,10 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { editor: false }, undefined, { "Set-Cookie": cookie(req, "", 0) });
     }
     if (req.method === "GET" && !url.pathname.startsWith("/api/")) {
-      // the page and its css/js; nothing outside public/ and only known file types
+      // the pages and their css/js/images; nothing outside public/ and only known file types
       const file = path.join(PUBLIC, url.pathname === "/" ? "index.html" : decodeURIComponent(url.pathname));
       const type = TYPES[path.extname(file)];
-      if (type && file.startsWith(PUBLIC + path.sep) && fs.existsSync(file)) return send(res, 200, fs.readFileSync(file, "utf8"), type);
+      if (type && file.startsWith(PUBLIC + path.sep) && fs.existsSync(file)) return send(res, 200, fs.readFileSync(file), type);
       return send(res, 404, "Nie gevind nie.", "text/plain; charset=utf-8");
     }
     if (req.method === "GET" && url.pathname === "/api/data") return send(res, 200, snapshot(isEditor(req)));
@@ -460,10 +500,10 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     if (req.method === "POST" && url.pathname === "/api/op") {
-      if (!isEditor(req)) return send(res, 401, { error: "teken in om te wysig" });
       if (!collection) return send(res, 503, { error: "net-lees: geen verbinding met MongoDB nie" });
       if (!json()) return send(res, 415, { error: "JSON verwag" });
       const op = JSON.parse(await readBody(req));
+      if (!isEditor(req) && !isOpenOp(op)) return send(res, 401, { error: "teken in om te wysig" });
       if (!apply(op)) return send(res, 400, { error: "ongeldige verandering" });
       state.rev++;
       saveLocal();
