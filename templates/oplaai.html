@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="af">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Christy &amp; Nicholas · Deel jou foto's</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&amp;family=Outfit:wght@300;400;500;600&amp;family=Playball&amp;display=swap" rel="stylesheet">
+<style>
+/* self-contained like bank.html: public (skips the view password). Colours from index.html */
+:root{
+  --navy:#141A3A; --ink:#1C1B4D; --muted:#4A5578; --link:#34507F;
+  --gold:#F4C430; --gold-deep:#D9A21B;
+  --mist:#D6DCF0; --paper:#F5F7FC; --white:#FFFFFF;
+  --ok:#2E7D4F; --bad:#B4453B;
+  --serif:'Alegreya SC', Georgia, serif; --script:'Playball', cursive;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 'Outfit', system-ui, sans-serif}
+a{color:var(--link)}
+a:focus-visible,button:focus-visible,input:focus-visible,label:focus-within{outline:3px solid var(--gold);outline-offset:3px}
+
+header{background:var(--navy);color:var(--white);text-align:center;padding:max(36px, env(safe-area-inset-top)) 16px 72px}
+.kicker{margin:0;font-family:var(--serif);font-size:13px;letter-spacing:.22em;color:var(--gold)}
+h1{margin:6px 0 4px;font-family:var(--script);font-weight:400;font-size:clamp(38px, 11vw, 54px);line-height:1.1}
+.date{margin:0;font-size:13px;letter-spacing:.16em;color:var(--mist)}
+
+main{max-width:560px;margin:-48px auto 0;padding:0 16px max(32px, env(safe-area-inset-bottom))}
+.card{background:var(--white);border-radius:18px;border-top:5px solid var(--gold);box-shadow:0 14px 40px rgba(28,27,77,.14);padding:22px clamp(18px, 5vw, 28px) 24px}
+.intro{margin:0 0 18px;color:var(--muted)}
+label.field{display:block;font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+input[type=text]{width:100%;font:inherit;font-size:16px;color:var(--ink);padding:12px 14px;border:1.5px solid var(--mist);border-radius:12px;background:var(--paper)}
+input[type=text]:focus{outline:none;border-color:var(--gold-deep)}
+.pick{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;width:100%;padding:16px;border-radius:14px;background:var(--navy);color:var(--white);font-weight:600;font-size:16px;cursor:pointer;transition:transform .15s}
+.pick:hover{transform:translateY(-1px)}
+.pick svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pick input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.small{margin:10px 0 0;text-align:center;font-size:13px;color:var(--muted)}
+
+.summary{margin:22px 0 10px;font-weight:600}
+.summary:empty{display:none}
+.summary.done{color:var(--ok)}
+ul.files{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.file{padding:10px 12px;border:1px solid var(--mist);border-radius:12px;background:var(--paper)}
+.file .top{display:flex;align-items:baseline;gap:10px}
+.file .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.file .size{flex:none;font-size:12px;color:var(--muted)}
+.file .bar{height:6px;margin-top:8px;border-radius:6px;background:var(--mist);overflow:hidden}
+.file .bar i{display:block;height:100%;width:0;background:var(--gold-deep);transition:width .3s}
+.file .status{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13px;color:var(--muted)}
+.file.ok .bar i{background:var(--ok)}
+.file.ok .status{color:var(--ok)}
+.file.bad .status{color:var(--bad)}
+.file.bad .bar{display:none}
+.retry{margin-left:auto;font:inherit;font-size:13px;font-weight:600;color:var(--link);background:none;border:0;padding:2px 0;cursor:pointer;text-decoration:underline}
+
+footer{margin-top:24px;text-align:center;font-size:13px;color:var(--muted)}
+footer a{margin:0 8px}
+</style>
+</head>
+<body>
+<header>
+  <p class="kicker">ONS DIPPENAAR DROOM</p>
+  <h1>Deel jou foto's</h1>
+  <p class="date">CHRISTY &amp; NICHOLAS · 19.12.2026</p>
+</header>
+
+<main>
+  <div class="card">
+    <p class="intro">Het jy foto's of video's van ons troue geneem? Laai dit hier op, dan het ons dit vir altyd. Net ons twee kan sien wat opgelaai word.</p>
+
+    <label class="field" for="guest">JOU NAAM (OPSIONEEL)</label>
+    <input type="text" id="guest" maxlength="60" autocomplete="name" placeholder="bv. Tannie Marie">
+
+    <label class="pick">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M20 16v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3"/></svg>
+      Kies foto's en video's
+      <input type="file" id="files" multiple accept="image/*,video/*">
+    </label>
+    <p class="small">Tot 2 GB per lêer. Hou hierdie bladsy oop totdat alles klaar is.</p>
+
+    <p class="summary" id="summary" role="status" aria-live="polite"></p>
+    <ul class="files" id="list"></ul>
+  </div>
+
+  <footer>
+    <a href="/privaatheid">Privaatheid</a>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const MAX = 2 * 1024 ** 3;
+  const AT_ONCE = 2; // files uploading at the same time
+  const listEl = document.getElementById("list");
+  const summaryEl = document.getElementById("summary");
+  const guestEl = document.getElementById("guest");
+  const filesEl = document.getElementById("files");
+  const items = [];
+  const queue = [];
+  let active = 0;
+  let wakeLock = null;
+
+  // remember the name on this phone
+  try { guestEl.value = localStorage.getItem("troue.gasnaam") || ""; } catch {}
+  guestEl.addEventListener("change", () => { try { localStorage.setItem("troue.gasnaam", guestEl.value.trim()); } catch {} });
+
+  const mb = (n) => (n >= 1024 ** 3 ? (n / 1024 ** 3).toFixed(1) + " GB" : Math.max(0.1, n / 1024 ** 2).toFixed(1) + " MB");
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  filesEl.addEventListener("change", () => {
+    for (const file of filesEl.files) addFile(file);
+    filesEl.value = ""; // the same files can be chosen again
+    pump();
+  });
+
+  function addFile(file) {
+    const row = el("li", "file");
+    const top = el("div", "top");
+    top.append(el("span", "name", file.name), el("span", "size", mb(file.size)));
+    const bar = el("div", "bar");
+    const fill = el("i");
+    bar.append(fill);
+    const status = el("div", "status", "Wag…");
+    row.append(top, bar, status);
+    listEl.append(row);
+    const it = { file, row, fill, status, state: "waiting" };
+    items.push(it);
+    if (file.size > MAX) return fail(it, "Te groot: maksimum 2 GB per lêer.", false);
+    if (!file.size) return fail(it, "Leë lêer.", false);
+    queue.push(it);
+  }
+
+  function pump() {
+    while (active < AT_ONCE && queue.length) {
+      const it = queue.shift();
+      active++;
+      it.state = "busy";
+      upload(it)
+        .then(() => {
+          it.state = "ok";
+          it.row.className = "file ok";
+          it.fill.style.width = "100%";
+          it.status.textContent = "Opgelaai ✓";
+        })
+        .catch((e) => fail(it, e.message, true))
+        .finally(() => {
+          active--;
+          pump();
+          render();
+        });
+    }
+    render();
+  }
+
+  function fail(it, msg, canRetry) {
+    it.state = "bad";
+    it.row.className = "file bad";
+    it.status.replaceChildren(document.createTextNode(msg));
+    if (canRetry) {
+      const b = el("button", "retry", "Probeer weer");
+      b.type = "button";
+      b.addEventListener("click", () => {
+        it.row.className = "file";
+        it.fill.style.width = "0";
+        it.status.textContent = "Wag…";
+        it.state = "waiting";
+        queue.push(it);
+        pump();
+      });
+      it.status.append(b);
+    }
+    render();
+  }
+
+  function render() {
+    const ok = items.filter((i) => i.state === "ok").length;
+    const bad = items.filter((i) => i.state === "bad").length;
+    const left = items.length - ok - bad;
+    summaryEl.className = "summary" + (!left && !bad && ok ? " done" : "");
+    summaryEl.textContent = !items.length ? "" : left ? `Besig: ${ok} van ${items.length} opgelaai…` : bad ? `${ok} opgelaai, ${bad} het nie gewerk nie.` : `Klaar! ${ok} ${ok === 1 ? "lêer" : "lêers"} opgelaai. Baie dankie!`;
+    keepAwake(left > 0);
+  }
+
+  // keep the screen on while uploading, where the phone allows it
+  async function keepAwake(on) {
+    try {
+      if (on && !wakeLock && "wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen");
+      else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+    } catch {}
+  }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { wakeLock = null; render(); } });
+  window.addEventListener("beforeunload", (e) => { if (items.some((i) => i.state === "busy" || i.state === "waiting")) e.preventDefault(); });
+
+  // 1. the server asks Google Drive for an upload URL for this file
+  // 2. the file goes straight to that URL; when the connection drops, ask Drive how much arrived and carry on
+  async function upload(it) {
+    const { file } = it;
+    it.status.textContent = "Begin…";
+    const r = await fetch("/api/oplaai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: file.name, size: file.size, type: file.type, guest: guestEl.value.trim() }),
+    }).catch(() => null);
+    if (!r) throw new Error("Geen verbinding nie.");
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.url) throw new Error(data.error || "Kon nie oplaai nie.");
+
+    let offset = 0;
+    let tries = 0;
+    for (;;) {
+      it.status.textContent = "Laai op…";
+      const res = await put(data.url, it, offset).catch(() => null);
+      if (res && (res.status === 200 || res.status === 201)) return;
+      if (res && res.status === 308) { offset = nextByte(res.range); tries = 0; continue; }
+      // 4xx other than timeouts: the upload URL is no longer valid (it lasts about a week)
+      if (res && res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429) throw new Error(`Kon nie oplaai nie (${res.status}).`);
+      if (++tries > 8) throw new Error("Die verbinding hou op breek.");
+      it.status.textContent = "Verbinding onderbreek, probeer weer…";
+      await sleep(Math.min(30000, 1000 * 2 ** tries));
+      const q = await put(data.url, it, null).catch(() => null);
+      if (q && (q.status === 200 || q.status === 201)) return;
+      if (q && q.status === 308) offset = nextByte(q.range);
+    }
+  }
+
+  // "bytes=0-1234" -> 1235: the next byte Drive still needs
+  const nextByte = (range) => { const m = /bytes=0-(\d+)/.exec(range || ""); return m ? Number(m[1]) + 1 : 0; };
+
+  // offset null: only ask how much has arrived. XMLHttpRequest because fetch can't report upload progress
+  function put(url, it, offset) {
+    const size = it.file.size;
+    return new Promise((resolve, reject) => {
+      const x = new XMLHttpRequest();
+      x.open("PUT", url);
+      x.onload = () => resolve({ status: x.status, range: x.getResponseHeader("Range") });
+      x.onerror = x.ontimeout = x.onabort = () => reject(new Error("network"));
+      if (offset === null) {
+        x.setRequestHeader("Content-Range", `bytes */${size}`);
+        x.send();
+        return;
+      }
+      x.setRequestHeader("Content-Range", `bytes ${offset}-${size - 1}/${size}`);
+      x.upload.onprogress = (e) => { it.fill.style.width = (((offset + e.loaded) / size) * 100).toFixed(1) + "%"; };
+      x.send(it.file.slice(offset));
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -22,6 +22,9 @@
 //   TROUE_BANK, TROUE_BANK_HOUER, TROUE_BANK_REKENING, TROUE_BANK_TIPE, TROUE_BANK_TAKKODE,
 //   TROUE_BANK_VERWYSING  bank details for the public /bank page (bank, holder, account number,
 //                        account type, branch code, payment reference); no page without TROUE_BANK_REKENING
+//   TROUE_GOOGLE_CLIENT_ID, TROUE_GOOGLE_CLIENT_SECRET, TROUE_GOOGLE_REFRESH_TOKEN
+//                        Google Drive for the public /oplaai page where guests upload photos and videos;
+//                        the refresh token comes from: node scripts/google-login.js
 
 const http = require("http");
 const fs = require("fs");
@@ -448,11 +451,150 @@ const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&a
 const bankPage = BANK.account
   ? fs.readFileSync(path.join(DIR, "templates", "bank.html"), "utf8").replace(/\{\{(\w+)\}\}/g, (_, k) => escapeHtml(BANK[k]))
   : null;
+/* ---------------- guest photo uploads (/oplaai) ---------------- */
+// Guests' phones upload photos and videos straight into a "Troue foto's" folder in the couple's Google Drive.
+// The files never pass through this server: for each one it asks Drive for a resumable upload URL, sending
+// the page's Origin so Drive lets that browser use it, and hands the URL back (POST /api/oplaai).
+// Google access is the drive.file scope: only files and folders this app created itself.
+// Set up once with scripts/google-login.js; without all three TROUE_GOOGLE_* settings /oplaai answers 404.
+const GOOGLE = {
+  id: process.env.TROUE_GOOGLE_CLIENT_ID,
+  secret: process.env.TROUE_GOOGLE_CLIENT_SECRET,
+  refresh: process.env.TROUE_GOOGLE_REFRESH_TOKEN,
+};
+const UPLOADS_ON = !!(GOOGLE.id && GOOGLE.secret && GOOGLE.refresh);
+const UPLOAD_FOLDER = "Troue foto's";
+const MAX_UPLOAD = 2 * 1024 ** 3; // 2 GB per file
+const KEEP_FREE = 1024 ** 3; // the Drive is shared with Gmail: refuse uploads that would leave less than 1 GB
+const UPLOADS_PER_HOUR = 600; // per IP; generous because everyone on the venue's wifi may share one IP
+const MEDIA_TYPE = /^(image|video)\//;
+const MEDIA_EXT = /\.(jpe?g|png|gif|webp|heic|heif|avif|dng|mp4|mov|m4v|3gp|webm|mkv|avi)$/i;
+
+let googleAccess = null; // { token, exp }
+let googleAccessP = null; // refresh in flight, shared by concurrent requests
+function googleToken() {
+  if (googleAccess && googleAccess.exp > Date.now() + 60_000) return Promise.resolve(googleAccess.token);
+  googleAccessP ||= (async () => {
+    const r = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ client_id: GOOGLE.id, client_secret: GOOGLE.secret, refresh_token: GOOGLE.refresh, grant_type: "refresh_token" }),
+    });
+    const t = await r.json();
+    // invalid_grant: the sign-in was revoked or expired; run scripts/google-login.js again
+    if (!r.ok || !t.access_token) throw new Error(`Google sign-in: ${t.error || r.status}`);
+    googleAccess = { token: t.access_token, exp: Date.now() + t.expires_in * 1000 };
+    return t.access_token;
+  })().finally(() => (googleAccessP = null));
+  return googleAccessP;
+}
+async function drive(url, opts = {}) {
+  const r = await fetch(url, { ...opts, headers: { Authorization: `Bearer ${await googleToken()}`, ...opts.headers } });
+  if (!r.ok) throw new Error(`Google Drive ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  return r;
+}
+
+// the upload folder: found by name (drive.file only sees the app's own files) or created; looked up once
+let folderP = null;
+function uploadFolder() {
+  folderP ||= (async () => {
+    const q = encodeURIComponent(`name = "${UPLOAD_FOLDER}" and mimeType = "application/vnd.google-apps.folder" and trashed = false`);
+    const found = await (await drive(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&orderBy=createdTime`)).json();
+    if (found.files.length) return found.files[0].id;
+    const made = await drive("https://www.googleapis.com/drive/v3/files?fields=id", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: UPLOAD_FOLDER, mimeType: "application/vnd.google-apps.folder" }),
+    });
+    return (await made.json()).id;
+  })().catch((e) => {
+    folderP = null; // try again on the next upload
+    throw e;
+  });
+  return folderP;
+}
+
+// free space in the Drive, asked at most once a minute; space handed out since then counts as used
+let space = { free: 0, at: 0, promised: 0 };
+async function freeSpace() {
+  if (Date.now() - space.at > 60_000) {
+    const { storageQuota: q } = await (await drive("https://www.googleapis.com/drive/v3/about?fields=storageQuota")).json();
+    space = { free: q.limit ? Number(q.limit) - Number(q.usage) : Infinity, at: Date.now(), promised: 0 };
+  }
+  return space.free - space.promised;
+}
+
+const uploadsByIp = new Map(); // ip -> { count, since }
+function uploadAllowed(ip) {
+  const now = Date.now();
+  for (const [k, v] of uploadsByIp) if (now - v.since > 3600_000) uploadsByIp.delete(k);
+  const u = uploadsByIp.get(ip) || { count: 0, since: now };
+  if (u.count >= UPLOADS_PER_HOUR) return false;
+  u.count++;
+  uploadsByIp.set(ip, u);
+  return true;
+}
+
+// a name safe for Drive: no control characters or slashes, trimmed
+const plainName = (v, max) => str(v, max * 2).replace(/[\u0000-\u001f\u007f/\\]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
+
+async function startUpload(req, res, ip) {
+  // only the upload page on this same site may ask (browsers always send Origin on a POST)
+  const proto = req.headers["x-forwarded-proto"]?.split(",")[0].trim() || "http";
+  const origin = req.headers.origin;
+  if (!origin || origin !== `${proto}://${req.headers.host}`) return send(res, 403, { error: "nie toegelaat nie" });
+  if (!(req.headers["content-type"] || "").startsWith("application/json")) return send(res, 415, { error: "JSON verwag" });
+  let b;
+  try {
+    b = JSON.parse(await readBody(req));
+  } catch {
+    return send(res, 400, { error: "kon nie verwerk nie" });
+  }
+  const name = plainName(b?.name, 150) || "lêer";
+  const guest = plainName(b?.guest, 60);
+  const type = MEDIA_TYPE.test(b?.type) ? str(b.type, 100) : "";
+  const size = b?.size;
+  if (!type && !MEDIA_EXT.test(name)) return send(res, 415, { error: "Net foto's en video's, asseblief." });
+  if (!Number.isSafeInteger(size) || size < 1) return send(res, 400, { error: "leë lêer" });
+  if (size > MAX_UPLOAD) return send(res, 413, { error: "Te groot: maksimum 2 GB per lêer." });
+  if (!uploadAllowed(ip)) return send(res, 429, { error: "Te veel oplaaie. Probeer oor 'n uur weer." });
+
+  try {
+    if ((await freeSpace()) - size < KEEP_FREE) {
+      console.warn(`Oplaai geweier: Google Drive is amper vol (${name}, ${size} grepe)`);
+      return send(res, 507, { error: "Ons foto-vouer is ongelukkig vol. Stuur dit asseblief direk vir ons." });
+    }
+    const folder = await uploadFolder();
+    const r = await drive("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        "X-Upload-Content-Length": String(size),
+        ...(type && { "X-Upload-Content-Type": type }),
+        Origin: origin,
+      },
+      body: JSON.stringify({
+        name: guest ? `${guest} - ${name}` : name,
+        parents: [folder],
+        description: `Opgelaai deur ${guest || "'n gas"} op die troue-webwerf, ${new Date().toISOString()}`,
+      }),
+    });
+    const url = r.headers.get("location");
+    if (!url) throw new Error("Google Drive gave no upload URL");
+    space.promised += size;
+    return send(res, 200, { url });
+  } catch (e) {
+    console.error(`Kon nie oplaai begin nie: ${e.message}`);
+    return send(res, 502, { error: "Kon nie nou oplaai nie. Probeer asseblief weer." });
+  }
+}
+
 // public pages that skip the view password: path -> html (null answers 404).
 // /privaatheid is the privacy policy, also the one linked from the Google sign-in app.
 const PUBLIC_PAGES = {
   "/bank": { html: bankPage, robots: "noindex, nofollow" },
   "/privaatheid": { html: fs.readFileSync(path.join(DIR, "templates", "privaatheid.html"), "utf8") },
+  "/oplaai": { html: UPLOADS_ON ? fs.readFileSync(path.join(DIR, "templates", "oplaai.html"), "utf8") : null, robots: "noindex, nofollow" },
 };
 
 /* ---------------- http ---------------- */
@@ -485,6 +627,11 @@ const server = http.createServer(async (req, res) => {
   if (page) {
     if (!page.html) return send(res, 404, "Nie gevind nie.", "text/plain; charset=utf-8");
     return send(res, 200, page.html, TYPES[".html"], page.robots ? { "X-Robots-Tag": page.robots } : {});
+  }
+  // the upload page's one API call: public like the page itself
+  if (req.method === "POST" && pagePath === "/api/oplaai") {
+    if (!UPLOADS_ON) return send(res, 404, { error: "nie beskikbaar nie" });
+    return startUpload(req, res, ip).catch((e) => send(res, e.message === "too large" ? 413 : 400, { error: "kon nie verwerk nie" }));
   }
   if (!canView(req)) {
     if (req.headers.authorization) noteFailure(ip);

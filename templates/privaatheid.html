@@ -1,113 +1,107 @@
 <!doctype html>
 <html lang="af">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Nic &amp; Christy · Privaatheid</title>
-    <script>
-      try {
-        const t = JSON.parse(localStorage.getItem("troue.theme"));
-        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-      } catch {}
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
-    <style>
-      /* self-contained like bank.html: public, skips the view password */
-      :root {
-        --bg: #fbf8f2;
-        --surface: #fffdf9;
-        --text: #26312d;
-        --muted: #6e776f;
-        --line: #e9e2d5;
-        --accent-strong: #2f8590;
-        --sage: #8a9a7b;
-        --shadow: 0 1px 2px rgba(80, 60, 30, 0.05), 0 10px 28px -14px rgba(80, 60, 30, 0.16);
-        --radius: 18px;
-        --font-display: "Cormorant Garamond", Georgia, serif;
-        --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-        color-scheme: light;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) {
-          --bg: #161412;
-          --surface: #1f1c19;
-          --text: #f1ebe1;
-          --muted: #a89f92;
-          --line: #36302a;
-          --accent-strong: #8fd6de;
-          --sage: #a3b394;
-          --shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
-          color-scheme: dark;
-        }
-      }
-      :root[data-theme="dark"] {
-        --bg: #161412;
-        --surface: #1f1c19;
-        --text: #f1ebe1;
-        --muted: #a89f92;
-        --line: #36302a;
-        --accent-strong: #8fd6de;
-        --sage: #a3b394;
-        --shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
-        color-scheme: dark;
-      }
-      * { box-sizing: border-box; }
-      body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-      .wrap { max-width: 640px; margin: 0 auto; padding: max(40px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom)); }
-      header { text-align: center; margin-bottom: 28px; }
-      .kicker { margin: 0; color: var(--sage); font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
-      h1 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(36px, 10vw, 46px); line-height: 1.05; }
-      .amp { font-style: italic; font-weight: 500; color: var(--accent-strong); }
-      .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px 22px 18px; }
-      h2 { margin: 22px 0 6px; font-family: var(--font-display); font-size: 24px; font-weight: 600; }
-      p, li { font-size: 15px; }
-      ul { padding-left: 20px; margin: 6px 0; }
-      .muted { color: var(--muted); }
-      .en { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 6px; }
-      .back { margin: 24px 0 0; text-align: center; font-size: 14px; }
-      a { color: var(--accent-strong); }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <header>
-        <p class="kicker">Privaatheid</p>
-        <h1>Nic <span class="amp">&amp;</span> Christy</h1>
-      </header>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Christy &amp; Nicholas · Privaatheid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&amp;family=Outfit:wght@300;400;500;600&amp;family=Playball&amp;display=swap" rel="stylesheet">
+<style>
+/* self-contained like bank.html and oplaai.html: public, skips the view password.
+   Colours and fonts from index.html (navy and sunflower gold) */
+:root{
+  --navy:#141A3A; --ink:#1C1B4D; --muted:#4A5578; --link:#34507F;
+  --gold:#F4C430; --gold-deep:#D9A21B;
+  --mist:#D6DCF0; --paper:#F5F7FC; --white:#FFFFFF;
+  --serif:'Alegreya SC', Georgia, serif; --script:'Playball', cursive;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.6 'Outfit', system-ui, sans-serif}
+a{color:var(--link);text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:3px}
+a:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
 
-      <main class="card">
-        <h2>Wie ons is</h2>
-        <p>Hierdie webwerf is ons persoonlike troue-webwerf, deur Nic en Christy self bestuur. Dit is nie 'n besigheid nie.</p>
+header{background:var(--navy);color:var(--white);text-align:center;padding:max(36px, env(safe-area-inset-top)) 16px 72px}
+.kicker{margin:0;font-family:var(--serif);font-size:13px;letter-spacing:.22em;color:var(--gold)}
+h1{margin:6px 0 4px;font-family:var(--script);font-weight:400;font-size:clamp(38px, 11vw, 54px);line-height:1.1}
+.date{margin:0;font-size:13px;letter-spacing:.16em;color:var(--mist)}
 
-        <h2>Wat ons van jou ontvang</h2>
-        <ul>
-          <li><strong>Foto's en video's</strong> wat jy vrywillig van die troue oplaai, en die naam wat jy opsioneel daarby tik.</li>
-          <li><strong>Tegniese inligting</strong> wat enige webwerf ontvang, soos jou IP-adres, net om misbruik te beperk (byvoorbeeld te veel oplaaie). Ons stoor dit nie langtermyn nie.</li>
-        </ul>
-        <p>Die bankbesonderhede-bladsy en die tydlyn vra niks van jou nie. Ons gebruik geen advertensies of volg-koekies nie.</p>
+main{max-width:640px;margin:-48px auto 0;padding:0 16px max(32px, env(safe-area-inset-bottom))}
+.card{background:var(--white);border-radius:18px;border-top:5px solid var(--gold);box-shadow:0 14px 40px rgba(28,27,77,.14);padding:6px clamp(18px, 5vw, 32px) 22px}
+h2{display:flex;align-items:center;gap:10px;margin:24px 0 6px;font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+h2 svg{width:18px;height:18px;flex:none}
+p,li{margin:6px 0}
+ul{padding-left:20px;margin:6px 0}
+li::marker{color:var(--gold-deep)}
+code{font-size:13px;background:var(--paper);padding:1px 5px;border-radius:4px}
+.en{margin-top:26px;padding-top:4px;border-top:2px dashed var(--mist)}
+.en p{color:var(--muted)}
+.back{margin:24px 0 0;text-align:center;font-size:14px}
+</style>
+</head>
+<body>
+<!-- the landing page's sunflower -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sf" viewBox="-30 -30 60 60">
+    <g fill="#D9A21B">
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(15)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(45)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(75)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(105)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(135)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(165)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(195)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(225)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(255)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(285)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(315)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(345)"/>
+    </g>
+    <g fill="#F4C430">
+      <ellipse rx="5" ry="12" cy="-16"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(30)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(60)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(90)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(120)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(150)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(180)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(210)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(240)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(270)"/>
+      <ellipse rx="5" ry="12" cy="-16" transform="rotate(300)"/><ellipse rx="5" ry="12" cy="-16" transform="rotate(330)"/>
+    </g>
+    <circle r="9" fill="#5A3A1E"/>
+    <circle r="5.5" fill="#3E2713"/>
+  </symbol>
+</svg>
 
-        <h2>Waarvoor ons dit gebruik</h2>
-        <p>Net om die herinneringe van ons troue bymekaar te maak en te bewaar. Ons verkoop of deel dit met niemand nie, en gebruik dit vir niks anders nie.</p>
+<header>
+  <p class="kicker">ONS DIPPENAAR DROOM</p>
+  <h1>Privaatheid</h1>
+  <p class="date">CHRISTY &amp; NICHOLAS · 19.12.2026</p>
+</header>
 
-        <h2>Waar dit gestoor word en wie dit sien</h2>
-        <p>Opgelaaide lêers gaan direk na 'n privaat vouer in ons eie Google Drive. Net ons twee het toegang; ander gaste kan nie sien wat jy opgelaai het nie. Die webwerf self word deur Render gehuisves.</p>
-        <p>Die webwerf het slegs toegang tot die lêers wat dit self in ons Google Drive geskep het, en tot niks anders in enige Google-rekening nie. Jy hoef nie by Google aan te meld om op te laai nie.</p>
+<main>
+  <div class="card">
+    <h2><svg aria-hidden="true"><use href="#sf"></use></svg>Wie ons is</h2>
+    <p>Hierdie webwerf is ons persoonlike troue-webwerf, deur Nic en Christy self bestuur. Dit is nie 'n besigheid nie.</p>
 
-        <h2>Hoe lank ons dit hou</h2>
-        <p>Ons laai die lêers af om as persoonlike herinneringe te bewaar, en verwyder dan die oplaai-vouer uit Google Drive, uiterlik 12 maande na die troue.</p>
+    <h2><svg aria-hidden="true"><use href="#sf"></use></svg>Wat ons van jou ontvang</h2>
+    <ul>
+      <li><strong>Foto's en video's</strong> wat jy vrywillig van die troue oplaai, en die naam wat jy opsioneel daarby tik.</li>
+      <li><strong>Tegniese inligting</strong> wat enige webwerf ontvang, soos jou IP-adres, net om misbruik te beperk (byvoorbeeld te veel oplaaie). Ons stoor dit nie langtermyn nie.</li>
+    </ul>
+    <p>Die bankbesonderhede-bladsy en die tydlyn vra niks van jou nie. Ons gebruik geen advertensies of volg-koekies nie.</p>
 
-        <h2>Jou keuses</h2>
-        <p>Wil jy hê ons moet iets wat jy opgelaai het verwyder, of wil jy weet wat ons van jou het? Laat weet een van ons direk, dan sorg ons daarvoor.</p>
+    <h2><svg aria-hidden="true"><use href="#sf"></use></svg>Waarvoor ons dit gebruik</h2>
+    <p>Net om die herinneringe van ons troue bymekaar te maak en te bewaar. Ons verkoop of deel dit met niemand nie, en gebruik dit vir niks anders nie.</p>
 
-        <div class="en">
-          <h2>In English</h2>
-          <p class="muted">This is Nic and Christy's personal wedding website. Guests can voluntarily upload photos and videos of the wedding, optionally with their name. Uploads go straight to a private folder in the couple's own Google Drive, where only the couple can see them. The site's Google access is limited to files it created itself (Google's <code>drive.file</code> permission); it reads no other Google data and shares nothing with anyone. Files are kept only to preserve the couple's memories and the upload folder is removed from Google Drive within 12 months after the wedding. To have something removed, contact Nic or Christy directly.</p>
-        </div>
-      </main>
+    <h2><svg aria-hidden="true"><use href="#sf"></use></svg>Waar dit gestoor word en wie dit sien</h2>
+    <p>Opgelaaide lêers gaan direk na 'n privaat vouer in ons eie Google Drive. Net ons twee het toegang; ander gaste kan nie sien wat jy opgelaai het nie. Die webwerf self word deur Render gehuisves.</p>
+    <p>Die webwerf het slegs toegang tot die lêers wat dit self in ons Google Drive geskep het, en tot niks anders in enige Google-rekening nie. Jy hoef nie by Google aan te meld om op te laai nie.</p>
 
-      <p class="back"><a href="/">← Terug na die webwerf</a></p>
+    <h2><svg aria-hidden="true"><use href="#sf"></use></svg>Hoe lank ons dit hou</h2>
+    <p>Ons laai die lêers af om as persoonlike herinneringe te bewaar, en verwyder dan die oplaai-vouer uit Google Drive, uiterlik 12 maande na die troue.</p>
+
+    <h2><svg aria-hidden="true"><use href="#sf"></use></svg>Jou keuses</h2>
+    <p>Wil jy hê ons moet iets wat jy opgelaai het verwyder, of wil jy weet wat ons van jou het? Laat weet een van ons direk, dan sorg ons daarvoor.</p>
+
+    <div class="en">
+      <h2>In English</h2>
+      <p>This is Nic and Christy's personal wedding website. Guests can voluntarily upload photos and videos of the wedding, optionally with their name. Uploads go straight to a private folder in the couple's own Google Drive, where only the couple can see them. The site's Google access is limited to files it created itself (Google's <code>drive.file</code> permission); it reads no other Google data and shares nothing with anyone. Files are kept only to preserve the couple's memories and the upload folder is removed from Google Drive within 12 months after the wedding. To have something removed, contact Nic or Christy directly.</p>
     </div>
-  </body>
+  </div>
+
+  <p class="back"><a href="/oplaai">← Terug na die oplaai-bladsy</a></p>
+</main>
+</body>
 </html>

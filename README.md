@@ -56,12 +56,25 @@ The server uses the `PORT` environment variable if set (otherwise port 3000) and
 | `TROUE_LEES_WAGWOORD` | No | Optional password required just to view the app. Must differ from the editor password. |
 | `PORT` | No | HTTP port; defaults to `3000`. Hosting platforms commonly set this automatically. |
 | `HOST` | No | Interface to bind to; defaults to `127.0.0.1`. Use `0.0.0.0` on a hosted service. |
+| `TROUE_GOOGLE_CLIENT_ID`, `TROUE_GOOGLE_CLIENT_SECRET`, `TROUE_GOOGLE_REFRESH_TOKEN` | No | Google Drive access for the `/oplaai` photo upload page. See [Guest photo uploads](#guest-photo-uploads). |
 | `TROUE_BANK_REKENING` | No | Account number for the `/bank` gift page. The page only exists when this is set. |
 | `TROUE_BANK` | No | Bank name shown on `/bank`. |
 | `TROUE_BANK_HOUER` | No | Account holder shown on `/bank`. |
 | `TROUE_BANK_TIPE` | No | Account type shown on `/bank`. |
 | `TROUE_BANK_TAKKODE` | No | Branch code shown on `/bank`. |
 | `TROUE_BANK_VERWYSING` | No | Payment reference shown on `/bank`; defaults to `Jou naam en van`. |
+
+## Guest photo uploads
+
+`/oplaai` is a public page where guests upload photos and videos (up to 2 GB each) without signing in. Files go straight from the guest's browser into a private **"Troue foto's"** folder in the couple's Google Drive; the server only asks Drive for a resumable upload URL per file (`POST /api/oplaai`), so large videos never pass through the host and interrupted uploads resume. The app uses Google's `drive.file` scope, so it can only see files and folders it created.
+
+Setup, once:
+
+1. In a Google Cloud project, enable the Drive API, configure the OAuth consent screen (External, scope `drive.file`, privacy policy `/privaatheid`), publish it **In production** (in Testing, Google expires the sign-in after 7 days), and create a **Desktop app** OAuth client.
+2. Put `TROUE_GOOGLE_CLIENT_ID` and `TROUE_GOOGLE_CLIENT_SECRET` in `.env` and run `node scripts/google-login.js`. It writes `TROUE_GOOGLE_REFRESH_TOKEN` to `.env`.
+3. Copy all three `TROUE_GOOGLE_*` values to the host's environment settings. The page answers 404 until all three are set.
+
+Limits: 600 uploads per IP per hour, and uploads are refused once the Drive (shared with Gmail) would have less than 1 GB free. If uploads stop with `invalid_grant` in the server log, the Google sign-in was revoked or expired: run the script again and update the token on the host.
 
 ## Bank details page
 

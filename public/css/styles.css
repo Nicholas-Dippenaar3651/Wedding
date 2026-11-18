@@ -391,8 +391,7 @@ nav.pages {
   border-radius: 999px;
   box-shadow: var(--shadow-lift);
 }
-/* the tabs, plus the "Geskenk" link to /bank, which looks like a tab but opens its own page */
-nav.pages :is(button, a) {
+nav.pages button {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -404,10 +403,9 @@ nav.pages :is(button, a) {
   font-size: 0.98rem;
   padding: 13px 4px 14px;
   cursor: pointer;
-  text-decoration: none;
   transition: color 0.2s;
 }
-nav.pages :is(button, a):hover {
+nav.pages button:hover {
   color: var(--text);
 }
 nav.pages button::after {
@@ -448,7 +446,7 @@ nav.pages button[aria-selected="true"]::after {
     width: auto;
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 1fr; /* Tydlyn, Voorbereiding, Fotos and Geskenk; plus Begroting when signed in */
+    grid-auto-columns: 1fr; /* Tydlyn, Voorbereiding and Fotos; plus Begroting when signed in */
     border: 0;
     border-top: 1px solid var(--line);
     border-radius: 0;
@@ -458,13 +456,13 @@ nav.pages button[aria-selected="true"]::after {
     -webkit-backdrop-filter: blur(14px);
     padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px));
   }
-  nav.pages :is(button, a) {
+  nav.pages button {
     flex-direction: column;
     gap: 2px;
     font-size: 0.72rem;
     padding: 4px 0;
   }
-  nav.pages :is(button, a) .icon {
+  nav.pages button .icon {
     width: 44px;
     height: 28px;
     padding: 4px 12px;
