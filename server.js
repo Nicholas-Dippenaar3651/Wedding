@@ -448,6 +448,12 @@ const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&a
 const bankPage = BANK.account
   ? fs.readFileSync(path.join(DIR, "templates", "bank.html"), "utf8").replace(/\{\{(\w+)\}\}/g, (_, k) => escapeHtml(BANK[k]))
   : null;
+// public pages that skip the view password: path -> html (null answers 404).
+// /privaatheid is the privacy policy, also the one linked from the Google sign-in app.
+const PUBLIC_PAGES = {
+  "/bank": { html: bankPage, robots: "noindex, nofollow" },
+  "/privaatheid": { html: fs.readFileSync(path.join(DIR, "templates", "privaatheid.html"), "utf8") },
+};
 
 /* ---------------- http ---------------- */
 function send(res, status, body, type = "application/json; charset=utf-8", extra = {}) {
@@ -474,9 +480,11 @@ function readBody(req) {
 const server = http.createServer(async (req, res) => {
   const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress;
   if (tooManyFailures(ip)) return send(res, 429, "Te veel verkeerde wagwoorde. Probeer oor 15 minute weer.", "text/plain; charset=utf-8");
-  if (req.method === "GET" && /^\/bank\/?(\?.*)?$/.test(req.url)) {
-    if (!bankPage) return send(res, 404, "Nie gevind nie.", "text/plain; charset=utf-8");
-    return send(res, 200, bankPage, TYPES[".html"], { "X-Robots-Tag": "noindex, nofollow" });
+  const pagePath = req.url.split("?")[0].replace(/(.)\/$/, "$1"); // "/bank/" counts as "/bank"
+  const page = req.method === "GET" && Object.hasOwn(PUBLIC_PAGES, pagePath) && PUBLIC_PAGES[pagePath];
+  if (page) {
+    if (!page.html) return send(res, 404, "Nie gevind nie.", "text/plain; charset=utf-8");
+    return send(res, 200, page.html, TYPES[".html"], page.robots ? { "X-Robots-Tag": page.robots } : {});
   }
   if (!canView(req)) {
     if (req.headers.authorization) noteFailure(ip);

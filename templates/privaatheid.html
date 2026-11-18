@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="af">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Nic &amp; Christy · Privaatheid</title>
+    <script>
+      try {
+        const t = JSON.parse(localStorage.getItem("troue.theme"));
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+    <style>
+      /* self-contained like bank.html: public, skips the view password */
+      :root {
+        --bg: #fbf8f2;
+        --surface: #fffdf9;
+        --text: #26312d;
+        --muted: #6e776f;
+        --line: #e9e2d5;
+        --accent-strong: #2f8590;
+        --sage: #8a9a7b;
+        --shadow: 0 1px 2px rgba(80, 60, 30, 0.05), 0 10px 28px -14px rgba(80, 60, 30, 0.16);
+        --radius: 18px;
+        --font-display: "Cormorant Garamond", Georgia, serif;
+        --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #161412;
+          --surface: #1f1c19;
+          --text: #f1ebe1;
+          --muted: #a89f92;
+          --line: #36302a;
+          --accent-strong: #8fd6de;
+          --sage: #a3b394;
+          --shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #161412;
+        --surface: #1f1c19;
+        --text: #f1ebe1;
+        --muted: #a89f92;
+        --line: #36302a;
+        --accent-strong: #8fd6de;
+        --sage: #a3b394;
+        --shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+      .wrap { max-width: 640px; margin: 0 auto; padding: max(40px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom)); }
+      header { text-align: center; margin-bottom: 28px; }
+      .kicker { margin: 0; color: var(--sage); font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+      h1 { margin: 6px 0 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(36px, 10vw, 46px); line-height: 1.05; }
+      .amp { font-style: italic; font-weight: 500; color: var(--accent-strong); }
+      .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px 22px 18px; }
+      h2 { margin: 22px 0 6px; font-family: var(--font-display); font-size: 24px; font-weight: 600; }
+      p, li { font-size: 15px; }
+      ul { padding-left: 20px; margin: 6px 0; }
+      .muted { color: var(--muted); }
+      .en { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 6px; }
+      .back { margin: 24px 0 0; text-align: center; font-size: 14px; }
+      a { color: var(--accent-strong); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="kicker">Privaatheid</p>
+        <h1>Nic <span class="amp">&amp;</span> Christy</h1>
+      </header>
+
+      <main class="card">
+        <h2>Wie ons is</h2>
+        <p>Hierdie webwerf is ons persoonlike troue-webwerf, deur Nic en Christy self bestuur. Dit is nie 'n besigheid nie.</p>
+
+        <h2>Wat ons van jou ontvang</h2>
+        <ul>
+          <li><strong>Foto's en video's</strong> wat jy vrywillig van die troue oplaai, en die naam wat jy opsioneel daarby tik.</li>
+          <li><strong>Tegniese inligting</strong> wat enige webwerf ontvang, soos jou IP-adres, net om misbruik te beperk (byvoorbeeld te veel oplaaie). Ons stoor dit nie langtermyn nie.</li>
+        </ul>
+        <p>Die bankbesonderhede-bladsy en die tydlyn vra niks van jou nie. Ons gebruik geen advertensies of volg-koekies nie.</p>
+
+        <h2>Waarvoor ons dit gebruik</h2>
+        <p>Net om die herinneringe van ons troue bymekaar te maak en te bewaar. Ons verkoop of deel dit met niemand nie, en gebruik dit vir niks anders nie.</p>
+
+        <h2>Waar dit gestoor word en wie dit sien</h2>
+        <p>Opgelaaide lêers gaan direk na 'n privaat vouer in ons eie Google Drive. Net ons twee het toegang; ander gaste kan nie sien wat jy opgelaai het nie. Die webwerf self word deur Render gehuisves.</p>
+        <p>Die webwerf het slegs toegang tot die lêers wat dit self in ons Google Drive geskep het, en tot niks anders in enige Google-rekening nie. Jy hoef nie by Google aan te meld om op te laai nie.</p>
+
+        <h2>Hoe lank ons dit hou</h2>
+        <p>Ons laai die lêers af om as persoonlike herinneringe te bewaar, en verwyder dan die oplaai-vouer uit Google Drive, uiterlik 12 maande na die troue.</p>
+
+        <h2>Jou keuses</h2>
+        <p>Wil jy hê ons moet iets wat jy opgelaai het verwyder, of wil jy weet wat ons van jou het? Laat weet een van ons direk, dan sorg ons daarvoor.</p>
+
+        <div class="en">
+          <h2>In English</h2>
+          <p class="muted">This is Nic and Christy's personal wedding website. Guests can voluntarily upload photos and videos of the wedding, optionally with their name. Uploads go straight to a private folder in the couple's own Google Drive, where only the couple can see them. The site's Google access is limited to files it created itself (Google's <code>drive.file</code> permission); it reads no other Google data and shares nothing with anyone. Files are kept only to preserve the couple's memories and the upload folder is removed from Google Drive within 12 months after the wedding. To have something removed, contact Nic or Christy directly.</p>
+        </div>
+      </main>
+
+      <p class="back"><a href="/">← Terug na die webwerf</a></p>
+    </div>
+  </body>
+</html>
