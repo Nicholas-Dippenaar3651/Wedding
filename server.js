@@ -19,6 +19,9 @@
 //   HOST                 0.0.0.0 accepts connections from other devices on the network
 //                        (default 127.0.0.1, enough for tunnels such as
 //                        VS Code port forwarding, ngrok or cloudflared)
+//   TROUE_BANK, TROUE_BANK_HOUER, TROUE_BANK_REKENING, TROUE_BANK_TIPE, TROUE_BANK_TAKKODE,
+//   TROUE_BANK_VERWYSING  bank details for the public /bank page (bank, holder, account number,
+//                        account type, branch code, payment reference); no page without TROUE_BANK_REKENING
 
 const http = require("http");
 const fs = require("fs");
@@ -42,8 +45,8 @@ const PUBLIC = path.join(DIR, "public"); // the pages: index.html (landing), bep
 const DATA_DIR = path.join(DIR, "data"); // written by the server: data.json, sessions.json, rugsteun/
 const DATA = path.join(DATA_DIR, "data.json");
 const BACKUPS = path.join(DATA_DIR, "rugsteun");
-const PORT = Number(process.env.PORT);
-const HOST = process.env.HOST;
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || "127.0.0.1";
 const SESSIONS = path.join(DATA_DIR, "sessions.json");
 const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".jpg": "image/jpeg", ".webp": "image/webp" };
 
@@ -64,7 +67,7 @@ const BACKUPS_KEPT = 50;
 const MAX_BODY = 1024 * 1024;
 const SESSION_DAYS = 30;
 
-if (PASSWORD.length < 8) {
+if (!PASSWORD || PASSWORD.length < 8) {
   console.error("Stel eers 'n wagwoord van minstens 8 karakters in .env:\n  TROUE_WAGWOORD=kies-n-sterk-wagwoord");
   process.exit(1);
 }
@@ -429,6 +432,23 @@ function noteFailure(ip) {
   failures.set(ip, f);
 }
 
+/* ---------------- bank details page (/bank) ---------------- */
+// For guests who want to give a gift: opened from a printed QR code, so it skips the view password.
+// The details come from the environment (.env or the host's settings), never from the repo.
+// Without TROUE_BANK_REKENING the page answers 404.
+const BANK = {
+  bank: process.env.TROUE_BANK,
+  holder: process.env.TROUE_BANK_HOUER,
+  account: process.env.TROUE_BANK_REKENING,
+  type: process.env.TROUE_BANK_TIPE,
+  branch: process.env.TROUE_BANK_TAKKODE,
+  reference: process.env.TROUE_BANK_VERWYSING || "Jou naam en van",
+};
+const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const bankPage = BANK.account
+  ? fs.readFileSync(path.join(DIR, "templates", "bank.html"), "utf8").replace(/\{\{(\w+)\}\}/g, (_, k) => escapeHtml(BANK[k]))
+  : null;
+
 /* ---------------- http ---------------- */
 function send(res, status, body, type = "application/json; charset=utf-8", extra = {}) {
   res.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer", ...extra });
@@ -454,6 +474,10 @@ function readBody(req) {
 const server = http.createServer(async (req, res) => {
   const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress;
   if (tooManyFailures(ip)) return send(res, 429, "Te veel verkeerde wagwoorde. Probeer oor 15 minute weer.", "text/plain; charset=utf-8");
+  if (req.method === "GET" && /^\/bank\/?(\?.*)?$/.test(req.url)) {
+    if (!bankPage) return send(res, 404, "Nie gevind nie.", "text/plain; charset=utf-8");
+    return send(res, 200, bankPage, TYPES[".html"], { "X-Robots-Tag": "noindex, nofollow" });
+  }
   if (!canView(req)) {
     if (req.headers.authorization) noteFailure(ip);
     res.writeHead(401, { "WWW-Authenticate": 'Basic realm="Troue Beplanning", charset="UTF-8"', "Content-Type": "text/plain; charset=utf-8" });

@@ -56,6 +56,16 @@ The server uses the `PORT` environment variable if set (otherwise port 3000) and
 | `TROUE_LEES_WAGWOORD` | No | Optional password required just to view the app. Must differ from the editor password. |
 | `PORT` | No | HTTP port; defaults to `3000`. Hosting platforms commonly set this automatically. |
 | `HOST` | No | Interface to bind to; defaults to `127.0.0.1`. Use `0.0.0.0` on a hosted service. |
+| `TROUE_BANK_REKENING` | No | Account number for the `/bank` gift page. The page only exists when this is set. |
+| `TROUE_BANK` | No | Bank name shown on `/bank`. |
+| `TROUE_BANK_HOUER` | No | Account holder shown on `/bank`. |
+| `TROUE_BANK_TIPE` | No | Account type shown on `/bank`. |
+| `TROUE_BANK_TAKKODE` | No | Branch code shown on `/bank`. |
+| `TROUE_BANK_VERWYSING` | No | Payment reference shown on `/bank`; defaults to `Jou naam en van`. |
+
+## Bank details page
+
+`/bank` is a small public page with the couple's bank details for guests who want to give a gift, meant to be opened from a printed QR code. It deliberately skips `TROUE_LEES_WAGWOORD`, asks search engines not to index it, and has copy buttons for the holder, account number, and branch code. Keep the details in environment variables, never in the repository.
 
 Keep `.env` and database credentials private. Do not commit them to source control.
 
